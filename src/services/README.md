@@ -11,3 +11,4 @@ Data access and AI logic:
 - `recommendationService.ts`
 - `/ia/` → Open algorithms: SVD, TF-IDF, K-Means, Sentiment
 - `/db/` → Migrations and SQL scripts for RDS
+- `/anime/` → Anime services centralize GraphQL queries
