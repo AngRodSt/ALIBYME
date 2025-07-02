@@ -1,11 +1,63 @@
 @import "tailwindcss";
 
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
+h1 {
+  font-family: var(--font-poppins), sans-serif;
+  font-weight: 700;
+}
+h2,
+h3,
+h4 {
+  font-weight: 700;
 }
 
-@theme inline {
+p {
+  font-family: var(--font-poppins), sans-serif;
+  font-weight: 400;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  background: linear-gradient(45deg, #ffffff, #f1cca3) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+
+  color: #2b2929 !important;
+  z-index: 10 !important;
+  transition: transform 0.3s ease, filter 0.3s ease !important;
+}
+
+/* Styles for hover */
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  transform: scale(1.1) !important;
+  filter: brightness(1.1) !important;
+}
+
+/* Estilos para los pseudo-elementos que muestran los íconos de flecha */
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 15px !important;
+  font-weight: bold !important;
+}
+
+/* Ajustes de posición si deseas moverlos un poco más del borde */
+.swiper-button-next {
+  right: 20px !important;
+}
+
+.swiper-button-prev {
+  left: 20px !important;
+}
+/* :root {
+  /* --background: #ffffff;
+  --foreground: #171717; */
+
+/*@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
