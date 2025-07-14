@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { fetchTrendingAnime } from "@/services/anime/animeClientService";
+import { fetchPopularAnime } from "@/services/anime/animeClientService";
 import { Anime } from "@/models/Anime";
 
-export function useTrendingAnime() {
+export function usePopularAnime() {
   const [data, setData] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTrendingAnime()
+    fetchPopularAnime()
       .then(setData)
-      .catch(() => setError("No se pudo cargar trending."))
+      .catch(() => setError("Error loading popular animes"))
       .finally(() => setLoading(false));
   }, []);
 

@@ -3,12 +3,22 @@
 import Image from "next/image";
 import { useTrendingAnime } from "@/hooks/anime/useTrendingAnime";
 import { useBannerAnime } from "@/hooks/anime/useBannerAnime";
-import AnimeCarousel from "@/components/ui/Carousel";
+import AnimeCarousel from "@/components/ui/Carousel/AnimeCarousel";
+import { usePopularAnime } from "@/hooks/anime/usePopularAnime";
+import { useLastReleasesAnime } from "@/hooks/anime/useLastReleasesAnime";
+import PopularAnimeCarousel from "@/components/ui/Carousel/PopularAnimeCarousel";
+import AIRecommendationsOverlay from "@/components/ui/AIRecommendationsOverlay";
+import { useStudiosAnimes } from "@/hooks/anime/useStudiosAnime";
+import StudiosCarousel from "@/components/ui/Carousel/StudioCarousel";
 
 export default function Home() {
-  const { data: items } = useTrendingAnime();
+  const { data: trendingAnime } = useTrendingAnime();
+  const { data: popularAnime } = usePopularAnime();
   const { data: bannerData } = useBannerAnime();
+  const { data: lastReleasesAnime } = useLastReleasesAnime();
+  const { data: studiosAnime } = useStudiosAnimes();
 
+  console.log(studiosAnime);
   return (
     <section className="bg-[#111111] relative ">
       {/* Hero Image Section */}
@@ -16,7 +26,7 @@ export default function Home() {
         <div className="h-full lg:h-230 w-full bg-[url('/images/prueba.jpeg')] bg-cover bg-center"></div>
 
         {/* Overlay */}
-        <div className="absolute h-full lg:h-230 w-full inset-0 bg-black/80 z-10"></div>
+        <div className="absolute h-full lg:h-230 w-full inset-0 bg-black/90 z-10"></div>
 
         {/* Text Content */}
         <div className="container mx-auto absolute inset-0 z-20 flex flex-col lg:flex-row items-center justify-center px-8 pt-40 lg:pt-0 pb-32 lg:pb-36">
@@ -39,7 +49,7 @@ export default function Home() {
               {bannerData?.description || "Loading description..."}
             </p>
             <div className="mt-6 flex gap-4 justify-center lg:justify-start">
-              <button className="bg-black text-white font-semibold px-6 py-3 rounded-2xl transition-transform duration-200 hover:scale-105">
+              <button className="bg-white text-black font-semibold px-6 py-3 rounded-2xl transition-transform duration-200 hover:scale-105">
                 See More
               </button>
               <button className="bg-gradient-to-r from-[#DB372D] to-[#BD2D69] text-white font-semibold transition-transform duration-200 hover:scale-105 hover:shadow-lg hover:bg-gradient-to-l px-6 py-2 rounded-2xl">
@@ -50,12 +60,12 @@ export default function Home() {
 
           {/* Image Card Section */}
           <div className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2">
-            <div className="relative w-48 h-64 sm:w-80 sm:h-[28rem] lg:w-80 lg:h-[480px] overflow-hidden rounded-2xl border border-slate-900 glow-effect transform hover:scale-105 hover:-translate-y-3 transition-all duration-500 ease-out group">
+            <div className="relative w-48 h-64 sm:w-80 sm:h-[28rem] lg:w-80 lg:h-[30rem] overflow-hidden rounded-2xl  transform hover:scale-105 hover:-translate-y-3 transition-all duration-500 ease-out group">
               <Image
                 src={bannerData?.coverUrl || "/images/prueba.jpeg"}
                 alt={bannerData?.title || "Anime"}
                 fill
-                sizes="(max-width: 640px) 192px, (max-width: 1024px) 320px, 320px"
+                sizes="(max-width: 640px) 12rem, (max-width: 1024px) 20rem, 20rem"
                 className="object-cover"
                 priority
               />
@@ -67,10 +77,39 @@ export default function Home() {
       </div>
 
       {/* Cards Section (Overlapping Up) */}
-      <div className="overflow-hidden lg:-mt-50 z-30 relative px-4 container mx-auto pb-10 ">
-        <h2 className="text-white text-2xl mb-4">Last Releases</h2>
-        <AnimeCarousel animes={items} />
-        {/* ...more cards */}
+      <div className="overflow-hidden lg:-mt-50 z-30 relative pl-4 pr-8 pb-10 ">
+        <h2 className="text-white text-2xl mb-4 px-4 pt-4">
+          Trending Titles You Can’t Miss
+        </h2>
+        <AnimeCarousel animes={trendingAnime} />
+        <h2 className="text-white text-2xl mb-4 px-4 pt-4">
+          Highest Rated of All Time
+        </h2>
+        <PopularAnimeCarousel animes={popularAnime} />
+        {/*Section for the recommendations if the user is logIn*/}
+        <div className="relative">
+          <h2 className="text-white text-2xl mb-4 px-4 pt-4">
+            AI Personal Recommendations
+          </h2>
+          <AnimeCarousel animes={[]} />
+
+          {/* Black Overlay for Login Required */}
+          <AIRecommendationsOverlay
+            onLoginClick={() => {
+              // TODO: Add navigation to login page
+              console.log("Navigate to login");
+            }}
+          />
+        </div>
+        <h2 className="text-white text-2xl mb-4 px-4 pt-4">
+          Start Watching the Latest Hits
+        </h2>
+        <AnimeCarousel animes={lastReleasesAnime} />
+
+        <h2 className="text-white text-2xl mb-4 px-4 pt-4">
+          From the Creators of Your Favorites
+        </h2>
+        <StudiosCarousel studios={studiosAnime} />
       </div>
     </section>
   );

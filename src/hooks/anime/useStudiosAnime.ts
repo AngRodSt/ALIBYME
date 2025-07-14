@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { fetchTopAnime } from "@/services/anime/animeClientService";
-import { Anime } from "@/models/Anime";
+import { fetchStudiosAnime } from "@/services/anime/animeClientService";
+import { Studio } from "@/models/Anime";
 
-export function useBannerAnime() {
-  const [data, setData] = useState<Anime | null>(null);
+export function useStudiosAnimes() {
+  const [data, setData] = useState<Studio[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTopAnime()
+    fetchStudiosAnime()
       .then(setData)
-      .catch(() => setError("No se pudo cargar el banner."))
+      .catch(() => setError("No se pudo cargar studios."))
       .finally(() => setLoading(false));
   }, []);
 
