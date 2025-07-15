@@ -61,15 +61,13 @@ export async function generateMetadata() {
   try {
     const bannerData = await getTopAnime();
     return {
-      title: bannerData?.title
-        ? `${bannerData.title} - ALIBYME`
-        : "ALIBYME - Discover Amazing Anime",
+      title: "ALIBYME - Discover Amazing Anime",
       description:
         bannerData?.description?.slice(0, 160) ||
         "Discover trending anime, get personalized recommendations, and build your perfect collection.",
       openGraph: {
         images: bannerData?.coverUrl ? [bannerData.coverUrl] : [],
-        title: bannerData?.title || "ALIBYME",
+        title: "ALIBYME",
         description:
           bannerData?.description?.slice(0, 160) ||
           "Discover amazing anime content",
