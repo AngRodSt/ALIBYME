@@ -5,6 +5,7 @@
 /src/app/api
 /src/app/catalog
 /src/app/settings
+/src/app/profile
 /.pnp
 .pnp.*
 .yarn/*
