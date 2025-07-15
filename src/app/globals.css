@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Clases de texto personalizadas */
+.text-3xs {
+  font-size: 0.625rem; /* 10px */
+  line-height: 0.75rem; /* 12px */
+}
+
 h1 {
   font-family: var(--font-poppins), sans-serif;
   font-weight: 700;

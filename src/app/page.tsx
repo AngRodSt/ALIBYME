@@ -1,77 +1,83 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Suspense } from "react";
+import {
+  getTrendingAnime,
+  getLastReleases,
+  getPopularAnime,
+  getStudiosAnime,
+  getTopAnime,
+} from "@/services/anime/animeGraphqlService";
+import HomePageClient from "@/components/layout/HomePageClient";
 
-import Image from "next/image";
-import { useTrendingAnime } from "@/hooks/anime/useTrendingAnime";
-import { useBannerAnime } from "@/hooks/anime/useBannerAnime";
-import AnimeCarousel from "@/components/ui/Carousel";
-
-export default function Home() {
-  const { data: items } = useTrendingAnime();
-  const { data: bannerData } = useBannerAnime();
-
+//Lading component
+function HomePageSkeleton() {
   return (
-    <section className="bg-[#111111] relative ">
-      {/* Hero Image Section */}
-      <div className="relative h-screen w-full  ">
-        <div className="h-full lg:h-230 w-full bg-[url('/images/prueba.jpeg')] bg-cover bg-center"></div>
-
-        {/* Overlay */}
-        <div className="absolute h-full lg:h-230 w-full inset-0 bg-black/80 z-10"></div>
-
-        {/* Text Content */}
-        <div className="container mx-auto absolute inset-0 z-20 flex flex-col lg:flex-row items-center justify-center px-8 pt-40 lg:pt-0 pb-32 lg:pb-36">
-          {/* Text Section */}
-          <div className="flex-1 flex flex-col justify-center order-2 lg:order-1 text-center lg:text-left">
-            <h1 className="text-3xl lg:text-5xl text-white font-bold">
-              {bannerData?.title || "Loading..."}
-            </h1>
-            <p
-              className="text-white mt-4 max-w-md mx-auto lg:mx-0"
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 4,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                lineHeight: "1.5",
-              }}
-            >
-              {bannerData?.description || "Loading description..."}
-            </p>
-            <div className="mt-6 flex gap-4 justify-center lg:justify-start">
-              <button className="bg-black text-white font-semibold px-6 py-3 rounded-2xl transition-transform duration-200 hover:scale-105">
-                See More
-              </button>
-              <button className="bg-gradient-to-r from-[#DB372D] to-[#BD2D69] text-white font-semibold transition-transform duration-200 hover:scale-105 hover:shadow-lg hover:bg-gradient-to-l px-6 py-2 rounded-2xl">
-                To Watch
-              </button>
-            </div>
-          </div>
-
-          {/* Image Card Section */}
-          <div className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2">
-            <div className="relative w-48 h-64 sm:w-80 sm:h-[28rem] lg:w-80 lg:h-[480px] overflow-hidden rounded-2xl border border-slate-900 glow-effect transform hover:scale-105 hover:-translate-y-3 transition-all duration-500 ease-out group">
-              <Image
-                src={bannerData?.coverUrl || "/images/prueba.jpeg"}
-                alt={bannerData?.title || "Anime"}
-                fill
-                sizes="(max-width: 640px) 192px, (max-width: 1024px) 320px, 320px"
-                className="object-cover"
-                priority
-              />
-              {/* Shine Effect Overlay */}
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,.3)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%] bg-[position:-100%_0] bg-no-repeat transition-[background-position_0s_ease] group-hover:bg-[position:200%_0] group-hover:duration-[1500ms] pointer-events-none"></div>
-            </div>
-          </div>
+    <section className="bg-[#111111] relative">
+      <div className="relative h-screen w-full">
+        <div className="h-full lg:h-230 w-full bg-gray-800 animate-pulse"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-white text-2xl">Loading...</div>
         </div>
-      </div>
-
-      {/* Cards Section (Overlapping Up) */}
-      <div className="overflow-hidden lg:-mt-50 z-30 relative px-4 container mx-auto pb-10 ">
-        <h2 className="text-white text-2xl mb-4">Last Releases</h2>
-        <AnimeCarousel animes={items} />
-        {/* ...more cards */}
       </div>
     </section>
   );
+}
+
+export default async function HomePage() {
+  try {
+    const [
+      trendingAnime,
+      popularAnime,
+      bannerData,
+      lastReleasesAnime,
+      studiosAnime,
+    ] = await Promise.all([
+      getTrendingAnime(1, 25),
+      getPopularAnime(1, 25),
+      getTopAnime(),
+      getLastReleases(1, 25),
+      getStudiosAnime(1, 10),
+    ]);
+
+    return (
+      <Suspense fallback={<HomePageSkeleton />}>
+        <HomePageClient
+          initialData={{
+            trendingAnime,
+            popularAnime,
+            bannerData,
+            lastReleasesAnime,
+            studiosAnime,
+          }}
+        />
+      </Suspense>
+    );
+  } catch (error) {
+    console.error("Error loading homepage data:", error);
+  }
+}
+
+export async function generateMetadata() {
+  try {
+    const bannerData = await getTopAnime();
+    return {
+      title: "ALIBYME - Discover Amazing Anime",
+      description:
+        bannerData?.description?.slice(0, 160) ||
+        "Discover trending anime, get personalized recommendations, and build your perfect collection.",
+      openGraph: {
+        images: bannerData?.coverUrl ? [bannerData.coverUrl] : [],
+        title: "ALIBYME",
+        description:
+          bannerData?.description?.slice(0, 160) ||
+          "Discover amazing anime content",
+      },
+    };
+  } catch (error) {
+    return {
+      title: "ALIBYME - Discover Amazing Anime",
+      description:
+        "Discover trending anime, get personalized recommendations, and build your perfect collection.",
+    };
+  }
 }
