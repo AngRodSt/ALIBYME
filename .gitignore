@@ -2,7 +2,9 @@
 
 # dependencies
 /node_modules
-/app/api
+/src/app/api
+/src/app/catalog
+/src/app/settings
 /.pnp
 .pnp.*
 .yarn/*
