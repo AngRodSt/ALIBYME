@@ -38,7 +38,7 @@ export default async function HomePage() {
       getLastReleases(1, 25),
       getStudiosAnime(1, 10),
     ]);
-
+    const backgroundUrl = "/images/prueba.jpeg";
     return (
       <Suspense fallback={<HomePageSkeleton />}>
         <HomePageClient
@@ -48,6 +48,7 @@ export default async function HomePage() {
             bannerData,
             lastReleasesAnime,
             studiosAnime,
+            backgroundUrl,
           }}
         />
       </Suspense>

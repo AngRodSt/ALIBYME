@@ -62,7 +62,10 @@ const StudiosCarousel: React.FC<StudiosCarouselProps> = ({ studios }) => {
           <SwiperSlide key={`${studio.name}-${index}`}>
             <div className="relative group cursor-pointer">
               {/* Card Container */}
-              <div className="relative h-40 w-full rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+              <div
+                className="relative h-40 w-full rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#DB372D] focus:ring-offset-2 focus:ring-offset-black"
+                tabIndex={0}
+              >
                 {/* Background Image */}
                 <div className="absolute inset-0">
                   <Image
