@@ -6,7 +6,6 @@ import PopularAnimeCarousel from "@/components/ui/Carousel/PopularAnimeCarousel"
 import AIRecommendationsOverlay from "@/components/ui/AIRecommendationsOverlay";
 import StudiosCarousel from "@/components/ui/Carousel/StudioCarousel";
 import { Anime, Studio } from "@/models/Anime";
-
 interface HomePageClientProps {
   initialData: {
     trendingAnime: Anime[];
