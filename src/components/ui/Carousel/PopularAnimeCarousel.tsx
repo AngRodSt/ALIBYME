@@ -9,6 +9,8 @@ import { Navigation } from "swiper/modules";
 import AnimeCard from "../AnimeCard";
 import { Anime } from "@/models/Anime";
 import { useId } from "react";
+import { useUserStore } from "@/store/userStore";
+import { createClient } from "@/utils/supabase/client";
 
 interface PopularAnimeCarouselProps {
   animes: Anime[];
@@ -17,6 +19,12 @@ interface PopularAnimeCarouselProps {
 export default function PopularAnimeCarousel({
   animes,
 }: PopularAnimeCarouselProps) {
+  const supabase = createClient();
+  const user = useUserStore((s) => s.user);
+  const addFavorite = useUserStore((s) => s.addFavorite);
+  const removeFavorite = useUserStore((s) => s.removeFavorite);
+  const favorites = useUserStore((s) => s.favorites);
+
   const uniqueId = useId();
   const nextButtonClass = `swiper-button-next-${uniqueId}`;
   const prevButtonClass = `swiper-button-prev-${uniqueId}`;
@@ -24,6 +32,14 @@ export default function PopularAnimeCarousel({
   // PlaceHolders if there is not data
   const displayItems = animes?.length > 0 ? animes : Array(4).fill(null);
 
+  const handleToggleFavorite = (animeId: number, isNowFavorite: boolean) => {
+    if (!user) return;
+    if (isNowFavorite) {
+      addFavorite(animeId, user.id, supabase);
+    } else {
+      removeFavorite(animeId, user.id, supabase);
+    }
+  };
   return (
     <>
       <div className="relative w-full min-h-[340px] sm:min-h-[400px] lg:min-h-[480px]">
@@ -49,7 +65,15 @@ export default function PopularAnimeCarousel({
           {displayItems.map((anime, index) => (
             <SwiperSlide key={anime?.id || `placeholder-${index}`}>
               {anime ? (
-                <AnimeCard anime={anime} size="large" showOverlay={true} />
+                <AnimeCard
+                  anime={anime}
+                  size="large"
+                  showOverlay={true}
+                  isFavorite={favorites.some((f) => f.anime_id === anime.id)}
+                  onToggle={(isNowFavorite) =>
+                    handleToggleFavorite(anime.id, isNowFavorite)
+                  }
+                />
               ) : (
                 <div className="rounded h-80 sm:h-96 lg:h-[28rem] w-full p-2">
                   <div className="relative h-full w-full bg-gray-800 rounded animate-pulse">

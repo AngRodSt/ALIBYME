@@ -22,6 +22,16 @@ export interface Anime {
   popularity?: number;
 }
 
+export interface UserAnimeStatus {
+  anime_id: number;
+  status: "watching" | "completed" | "dropped" | "plan to watch";
+}
+
+export interface Favorites {
+  anime_id: number;
+  user_id: string;
+}
+
 export interface RawGraphQLAnimeBasic {
   title: { english: string; native: string };
   bannerImage: string;

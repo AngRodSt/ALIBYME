@@ -1,14 +1,24 @@
 import { create } from "zustand";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { Anime } from "@/models/Anime";
+import { Favorites, UserAnimeStatus } from "@/models/Anime";
 
 interface UserStoreState {
   user: User | null;
   preferencesModal: boolean;
   setPreferencesModal: (v: boolean) => void;
-  favorites: Anime[];
+  favorites: Favorites[];
   statuses: UserAnimeStatus[];
   init: (supabase: SupabaseClient) => void;
+  addFavorite: (
+    animeId: number,
+    userId: string,
+    supabase: SupabaseClient
+  ) => Promise<void>;
+  removeFavorite: (
+    animeId: number,
+    userId: string,
+    supabase: SupabaseClient
+  ) => Promise<void>;
 }
 
 export const useUserStore = create<UserStoreState>((set) => ({
@@ -21,6 +31,7 @@ export const useUserStore = create<UserStoreState>((set) => ({
     }),
   favorites: [],
   statuses: [],
+
   init: (supabase) => {
     supabase.auth.getUser().then(({ data }) => {
       set({ user: data.user });
@@ -54,5 +65,32 @@ export const useUserStore = create<UserStoreState>((set) => ({
         statuses: s || [],
       });
     }
+  },
+
+  addFavorite: async (
+    animeId: number,
+    userId: string,
+    supabase: SupabaseClient
+  ) => {
+    set((state) => ({
+      favorites: [...state.favorites, { anime_id: animeId, user_id: userId }],
+    }));
+    await supabase
+      .from("favorites")
+      .insert({ anime_id: animeId, user_id: userId });
+  },
+  removeFavorite: async (
+    animeId: number,
+    userId: string,
+    supabase: SupabaseClient
+  ) => {
+    set((state) => ({
+      favorites: state.favorites.filter((f) => f.anime_id !== animeId),
+    }));
+    await supabase
+      .from("favorites")
+      .delete()
+      .eq("anime_id", animeId)
+      .eq("user_id", userId);
   },
 }));

@@ -14,6 +14,8 @@ import AnimeCardOverlay from "./AnimeCardOverlay";
 interface AnimeCardProps {
   anime: Anime;
   size?: AnimeCardSize;
+  isFavorite: boolean;
+  onToggle?: (isNowFavorite: boolean) => void;
   showOverlay?: boolean;
 }
 
@@ -21,6 +23,8 @@ export default function AnimeCard({
   anime,
   size = "medium",
   showOverlay = true,
+  isFavorite = false,
+  onToggle = () => {},
 }: AnimeCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const sizeClass = cardSizeClasses[size];
@@ -64,7 +68,7 @@ export default function AnimeCard({
 
           {/* Icono de favorito */}
           <div className="absolute top-2 right-2 z-40">
-            <FavoriteIcon />
+            <FavoriteIcon isFavorite={isFavorite} onToggle={onToggle} />
           </div>
 
           {/* Información básica siempre visible */}

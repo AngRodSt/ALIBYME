@@ -10,6 +10,8 @@ import AnimeCard from "../AnimeCard";
 import { Anime } from "@/models/Anime";
 import { AnimeCardSize, cardSizeClasses } from "@/types/cardSizes";
 import { useId } from "react";
+import { useUserStore } from "@/store/userStore";
+import { createClient } from "@/utils/supabase/client";
 
 //Function to create a carousel for the products
 interface AnimeCarouselProps {
@@ -23,6 +25,12 @@ export default function AnimeCarousel({
   cardSize = "medium",
   showOverlay = true,
 }: AnimeCarouselProps) {
+  const supabase = createClient();
+  const user = useUserStore((s) => s.user);
+  const addFavorite = useUserStore((s) => s.addFavorite);
+  const removeFavorite = useUserStore((s) => s.removeFavorite);
+  const favorites = useUserStore((s) => s.favorites);
+
   const uniqueId = useId();
   const nextButtonClass = `swiper-button-next-${uniqueId}`;
   const prevButtonClass = `swiper-button-prev-${uniqueId}`;
@@ -36,6 +44,15 @@ export default function AnimeCarousel({
     small: "min-h-[200px] sm:min-h-[240px] lg:min-h-[280px]",
     medium: "min-h-[280px] sm:min-h-[300px] lg:min-h-[340px]",
     large: "min-h-[340px] sm:min-h-[400px] lg:min-h-[480px]",
+  };
+
+  const handleToggleFavorite = (animeId: number, isNowFavorite: boolean) => {
+    if (!user) return;
+    if (isNowFavorite) {
+      addFavorite(animeId, user.id, supabase);
+    } else {
+      removeFavorite(animeId, user.id, supabase);
+    }
   };
 
   return (
@@ -67,6 +84,10 @@ export default function AnimeCarousel({
                   anime={anime}
                   size={cardSize}
                   showOverlay={showOverlay}
+                  isFavorite={favorites.some((f) => f.anime_id === anime.id)}
+                  onToggle={(isNowFavorite: boolean) =>
+                    handleToggleFavorite(anime.id, isNowFavorite)
+                  }
                 />
               ) : (
                 <div
