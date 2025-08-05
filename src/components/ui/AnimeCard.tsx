@@ -41,7 +41,10 @@ export default function AnimeCard({
   };
 
   return (
-    <div className={`rounded ${sizeClass} w-full transition-opacity p-2`}>
+    <div
+      data-testid="anime-card"
+      className={`rounded ${sizeClass} w-full transition-opacity p-2`}
+    >
       <Link
         href={`/anime/${anime.id}`}
         prefetch={true}

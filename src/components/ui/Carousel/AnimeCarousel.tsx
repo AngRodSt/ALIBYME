@@ -57,7 +57,10 @@ export default function AnimeCarousel({
 
   return (
     <>
-      <div className={`relative w-full ${minHeights[cardSize]}`}>
+      <div
+        data-testid="anime-carousel"
+        className={`relative w-full ${minHeights[cardSize]}`}
+      >
         <Swiper
           modules={[Navigation]}
           spaceBetween={2}
