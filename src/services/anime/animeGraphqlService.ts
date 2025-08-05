@@ -5,14 +5,21 @@ import {
   popularQuery,
   lastReleases,
   studios,
+  animeById,
 } from "@/gql/queries";
 import {
   Anime,
+  AnimeById,
   RawGraphQLAnime,
+  RawGraphQLAnimeById,
   RawGraphQLStudio,
   Studio,
 } from "@/models/Anime";
-import { mapRawToAnime, mapRawToStudio } from "@/utils/mapGraphqlAnime";
+import {
+  mapRawAnimeById,
+  mapRawToAnime,
+  mapRawToStudio,
+} from "@/utils/mapGraphqlAnime";
 
 // Rate limiting helper
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -48,6 +55,21 @@ async function requestWithRetry<T>(
     }
   }
   throw new Error("Max retries exceeded");
+}
+
+export async function getAnimeById(id: number): Promise<AnimeById | null> {
+  try {
+    return await requestWithRetry(async () => {
+      const { Media } = await graphqlClient.request<{
+        Media: RawGraphQLAnimeById;
+      }>(animeById, { id });
+
+      return mapRawAnimeById(Media);
+    });
+  } catch (error) {
+    console.error("Error fetching anime by id:", error);
+    return null;
+  }
 }
 
 export async function getTopAnime(): Promise<Anime | null> {

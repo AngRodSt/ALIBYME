@@ -114,3 +114,110 @@ query Studios {
   }
 }
 `;
+
+export const animeById = `
+query AnimeById($id: Int!) {
+  Media(id: $id) {
+    id
+    title {
+      romaji
+      english
+      native
+    }
+    trailer {
+      site
+      thumbnail
+      id
+    }
+    relations {
+      edges {
+        relationType
+        node {
+          id
+          title {
+            userPreferred
+          }
+          coverImage {
+            extraLarge
+          }
+        }
+      }
+    }
+    recommendations(page: 1, perPage: 15) {
+      edges {
+        node {
+          mediaRecommendation {
+            id
+            title {
+              userPreferred
+            }
+            coverImage {
+              extraLarge
+            }
+          }
+        }
+      }
+    }
+    type
+    format
+    status
+    episodes
+    duration
+    season
+    seasonYear
+    countryOfOrigin
+    source
+    studios {
+      nodes {
+        name
+      }
+    }
+    volumes
+    chapters
+    coverImage {
+      extraLarge
+    }
+    bannerImage
+    description
+    averageScore
+    genres
+    tags {
+      name
+    }
+    staff {
+      nodes {
+        name {
+          userPreferred
+        }
+        age
+        image {
+          medium
+        }
+        dateOfBirth {
+          year
+          month
+          day
+        }
+        primaryOccupations
+        staffMedia(perPage: 1) {
+          nodes {
+            id
+            title {
+              userPreferred
+            }
+          }
+        }
+      }
+    }
+    characters {
+      nodes {
+        name {
+          userPreferred
+        }
+        image {
+          large
+        }
+      }
+    }
+  }
+}`;

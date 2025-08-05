@@ -5,12 +5,14 @@ interface FavoriteIconProps {
   isFavorite?: boolean;
   onToggle?: (isFavorite: boolean) => void;
   className?: string;
+  size?: number;
 }
 
 export default function FavoriteIcon({
   isFavorite = false,
   onToggle,
   className = "",
+  size = 20,
 }: FavoriteIconProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -34,8 +36,8 @@ export default function FavoriteIcon({
       aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
     >
       <svg
-        width="20"
-        height="20"
+        width={size}
+        height={size}
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
