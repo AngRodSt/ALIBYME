@@ -57,22 +57,38 @@ export function mapRawAnimeById(raw: RawGraphQLAnimeById): AnimeById {
     studios: raw.studios?.nodes?.map((studio) => studio.name) || [],
     // Trailer
     trailer: raw.trailer,
-    // Relations
+    // Relations - mapear como objetos Anime completos
     relations:
       raw.relations?.edges?.map((edge) => ({
         type: edge.relationType,
-        anime: {
-          id: edge.node.id,
-          title: edge.node.title.userPreferred,
-          coverUrl: edge.node.coverImage.extraLarge,
-        },
+        anime: [
+          {
+            id: edge.node.id,
+            title: edge.node.title.english || edge.node.title.native,
+            description: edge.node.description,
+            coverUrl: edge.node.coverImage.extraLarge,
+            year: edge.node.startDate?.year,
+            genres: edge.node.genres,
+            status: edge.node.status,
+            episodes: edge.node.episodes,
+            popularity: edge.node.popularity,
+          },
+        ],
       })) || [],
-    // Recommendations
+    // Recommendations - mapear como objetos Anime completos
     recommendations:
       raw.recommendations?.edges?.map((edge) => ({
         id: edge.node.mediaRecommendation.id,
-        title: edge.node.mediaRecommendation.title.userPreferred,
+        title:
+          edge.node.mediaRecommendation.title.english ||
+          edge.node.mediaRecommendation.title.native,
+        description: edge.node.mediaRecommendation.description,
         coverUrl: edge.node.mediaRecommendation.coverImage.extraLarge,
+        year: edge.node.mediaRecommendation.startDate?.year,
+        genres: edge.node.mediaRecommendation.genres,
+        status: edge.node.mediaRecommendation.status,
+        episodes: edge.node.mediaRecommendation.episodes,
+        popularity: edge.node.mediaRecommendation.popularity,
       })) || [],
     staff:
       raw.staff?.nodes?.map((staffMember) => ({

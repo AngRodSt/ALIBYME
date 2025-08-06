@@ -12,16 +12,17 @@ import {
   Eye,
   Check,
   LibraryBig,
-  PlayCircleIcon,
   ChevronDown,
 } from "lucide-react";
 import AnimeCarousel from "@/components/ui/Carousel/AnimeCarousel";
 import FavoriteIcon from "@/components/ui/FavoriteIcon";
+import TrailerButton from "@/components/ui/TrailerButton";
 import { AnimeById } from "@/models/Anime";
 
 export default function AnimeDescriptionPage(initialData: AnimeById) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("Watching");
+  const [selectedOverview, setSelectedOverview] = useState<boolean>(true);
 
   const statusOptions = [
     { label: "To Watch", icon: Bookmark, value: "to-watch" },
@@ -232,18 +233,8 @@ export default function AnimeDescriptionPage(initialData: AnimeById) {
                   </div>
                 </section>
                 <section>
-                  {/* Triller Badge convert into link */}
-                  <div
-                    className="flex w-32 p-2 rounded-full bg-black/30 backdrop-blur-sm transition-all duration-300 hover:bg-black/50 hover:scale-110
-                  focus:outline-none focus:ring-2 focus:ring-white/50 justify-center gap-2 items-center"
-                  >
-                    <p className="font-light  text-sm text-white">Triller</p>
-                    <PlayCircleIcon
-                      color="white"
-                      size={24}
-                      className="transition-all duration-200 hover:scale-110 hover:stroke-red-400"
-                    />
-                  </div>
+                  {/* Trailer Button Component */}
+                  <TrailerButton trailer={initialData.trailer} />
                 </section>
               </section>
             </section>
@@ -260,133 +251,176 @@ export default function AnimeDescriptionPage(initialData: AnimeById) {
           {/* Navigation Tabs */}
           <div className="border-b border-gray-700 mb-8">
             <nav className="flex space-x-8">
-              <button className="border-b-2 border-white text-white pb-4 px-1 font-medium">
+              <button
+                onClick={() => setSelectedOverview(true)}
+                className={` pb-4 px-1 font-medium ${
+                  selectedOverview
+                    ? "border-b-2 border-white text-white"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
                 Overview
               </button>
-              <button className="text-gray-400 hover:text-white pb-4 px-1 font-medium">
+              <button
+                onClick={() => setSelectedOverview(false)}
+                className={` ${
+                  !selectedOverview
+                    ? "border-b-2 border-white text-white"
+                    : "text-gray-400 hover:text-white"
+                }  pb-4 px-1 font-medium`}
+              >
                 Relation
               </button>
             </nav>
           </div>
-
-          {/* Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Left Column - Details */}
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-6">Details</h2>
-              <div className="flex">
-                <div className="space-y-4 flex flex-col">
-                  <span className="text-gray-400">Type</span>
-                  <span className="text-gray-400">Episodes</span>
-                  <span className="text-gray-400">Genres</span>
-                  <span className="text-gray-400">Aired</span>
-                  <span className="text-gray-400">Status</span>
-                  <span className="text-gray-400">Season</span>
-                  <span className="text-gray-400">Studios</span>
-                  <span className="text-gray-400">Source</span>
-                  <span className="text-gray-400">Rating</span>
-                  <span className="text-gray-400">Duration</span>
+          {selectedOverview ? (
+            <>
+              {/* Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                {/* Left Column - Details */}
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-6">
+                    Details
+                  </h2>
+                  <div className="flex">
+                    <div className="space-y-4 flex flex-col">
+                      <span className="text-gray-400">Type</span>
+                      <span className="text-gray-400">Episodes</span>
+                      <span className="text-gray-400">Genres</span>
+                      <span className="text-gray-400">Aired</span>
+                      <span className="text-gray-400">Status</span>
+                      <span className="text-gray-400">Season</span>
+                      <span className="text-gray-400">Studios</span>
+                      <span className="text-gray-400">Source</span>
+                      <span className="text-gray-400">Rating</span>
+                      <span className="text-gray-400">Duration</span>
+                    </div>
+                    <div className="space-y-4 flex flex-col ml-10">
+                      <span className="text-white">
+                        {initialData.format || "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.episodes || "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.genres?.join(", ") || "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.season && initialData.seasonYear
+                          ? `${initialData.season} ${initialData.seasonYear}`
+                          : "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.status || "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.season && initialData.seasonYear
+                          ? `${initialData.season} ${initialData.seasonYear}`
+                          : "N/A"}
+                      </span>
+                      <span
+                        className="text-white max-w-[200px] truncate overflow-ellipsis whitespace-nowrap block"
+                        title={initialData.studios?.join(", ") || "N/A"}
+                      >
+                        {initialData.studios?.join(", ") || "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.source || "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.averageScore
+                          ? `${initialData.averageScore}/100`
+                          : "N/A"}
+                      </span>
+                      <span className="text-white">
+                        {initialData.duration
+                          ? `${initialData.duration} min.`
+                          : "N/A"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-4 flex flex-col ml-10">
-                  <span className="text-white">
-                    {initialData.format || "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.episodes || "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.genres?.join(", ") || "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.season && initialData.seasonYear
-                      ? `${initialData.season} ${initialData.seasonYear}`
-                      : "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.status || "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.season && initialData.seasonYear
-                      ? `${initialData.season} ${initialData.seasonYear}`
-                      : "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.studios?.join(", ") || "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.source || "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.averageScore
-                      ? `${initialData.averageScore}/100`
-                      : "N/A"}
-                  </span>
-                  <span className="text-white">
-                    {initialData.duration
-                      ? `${initialData.duration} min.`
-                      : "N/A"}
-                  </span>
-                </div>
-              </div>
-            </div>
 
-            {/* Right Column - Description */}
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-6">
-                Description
-              </h2>
-              <div className="space-y-4 text-gray-300 leading-relaxed">
-                {initialData.description ? (
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: initialData.description
-                        .replace(/<br\s*\/?>/gi, "</p><p>")
-                        .replace(/^/, "<p>")
-                        .replace(/$/, "</p>"),
-                    }}
-                    className="space-y-4"
-                  />
-                ) : (
-                  <p>No description available.</p>
-                )}
-              </div>
+                {/* Right Column - Description */}
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-6">
+                    Description
+                  </h2>
+                  <div className="space-y-4 text-gray-300 leading-relaxed">
+                    {initialData.description ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: initialData.description
+                            .replace(/<br\s*\/?>/gi, "</p><p>")
+                            .replace(/^/, "<p>")
+                            .replace(/$/, "</p>"),
+                        }}
+                        className="space-y-4"
+                      />
+                    ) : (
+                      <p>No description available.</p>
+                    )}
+                  </div>
 
-              {/* Genres Section */}
-              <div className="mt-8">
-                <h3 className="text-xl font-bold text-white mb-4">Genres</h3>
-                <div className="flex flex-wrap gap-2 ">
-                  {initialData.genres?.map((genre) => (
-                    <span
-                      key={genre}
-                      className="px-2 py-1 bg-red-500/20 rounded-md text-xs text-red-200 backdrop-blur-sm border border-red-500/30"
-                    >
-                      {genre}
-                    </span>
-                  )) || (
-                    <span className="text-gray-400">No genres available</span>
+                  {/* Genres Section */}
+                  <div className="mt-8">
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      Genres
+                    </h3>
+                    <div className="flex flex-wrap gap-2 ">
+                      {initialData.genres?.map((genre) => (
+                        <span
+                          key={genre}
+                          className="px-2 py-1 bg-red-500/20 rounded-md text-xs text-red-200 backdrop-blur-sm border border-red-500/30"
+                        >
+                          {genre}
+                        </span>
+                      )) || (
+                        <span className="text-gray-400">
+                          No genres available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Tags Section */}
+                  {initialData.tags && initialData.tags.length > 0 && (
+                    <div className="mt-6">
+                      <h3 className="text-xl font-bold text-white mb-4">
+                        Tags
+                      </h3>
+                      <div className="flex flex-wrap gap-2 ">
+                        {initialData.tags.slice(0, 10).map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-1 bg-red-500/20 rounded-md text-xs text-red-200 backdrop-blur-sm border border-red-500/30"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
-
-              {/* Tags Section */}
-              {initialData.tags && initialData.tags.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-xl font-bold text-white mb-4">Tags</h3>
-                  <div className="flex flex-wrap gap-2 ">
-                    {initialData.tags.slice(0, 10).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-red-500/20 rounded-md text-xs text-red-200 backdrop-blur-sm border border-red-500/30"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+            </>
+          ) : (
+            <>
+              {/* Related Anime Section */}
+              {initialData.relations && initialData.relations.length > 0 && (
+                <div className="mt-16">
+                  <h2 className="text-2xl font-bold text-white mb-8">
+                    Related Anime
+                  </h2>
+                  <AnimeCarousel
+                    animes={initialData.relations
+                      .flatMap((relation) => relation.anime)
+                      .slice(0, 10)}
+                  />
                 </div>
               )}
-            </div>
-          </div>
-
+            </>
+          )}
           {/* Characters Section */}
           {initialData.characters && initialData.characters.length > 0 && (
             <div className="mt-16">
@@ -460,61 +494,6 @@ export default function AnimeDescriptionPage(initialData: AnimeById) {
             </div>
           )}
 
-          {/* Trailer Section */}
-          {initialData.trailer && (
-            <div className="mt-16">
-              <h2 className="text-2xl font-bold text-white mb-8">Trailer</h2>
-              <div className="bg-white/5 rounded-xl p-6 backdrop-blur-sm border border-white/10">
-                <div className="aspect-video rounded-lg overflow-hidden">
-                  {initialData.trailer.site === "youtube" ? (
-                    <iframe
-                      src={`https://www.youtube.com/embed/${initialData.trailer.id}`}
-                      title="Anime Trailer"
-                      className="w-full h-full"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                      <p className="text-gray-400">Trailer not available</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Related Anime Section */}
-          {initialData.relations && initialData.relations.length > 0 && (
-            <div className="mt-16">
-              <h2 className="text-2xl font-bold text-white mb-8">
-                Related Anime
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                {initialData.relations.slice(0, 12).map((relation, index) => (
-                  <div key={index} className="group cursor-pointer">
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-white/5 border border-white/10 hover:scale-105 transition-transform duration-300">
-                      <Image
-                        src={relation.anime.coverUrl}
-                        alt={relation.anime.title}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="absolute top-2 left-2 bg-black/70 rounded px-2 py-1">
-                        <span className="text-xs text-white font-medium capitalize">
-                          {relation.type.replace("_", " ")}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="text-white font-semibold text-center text-sm line-clamp-2">
-                      {relation.anime.title}
-                    </h3>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Recommendations Section */}
           {initialData.recommendations &&
             initialData.recommendations.length > 0 && (
@@ -522,26 +501,9 @@ export default function AnimeDescriptionPage(initialData: AnimeById) {
                 <h2 className="text-2xl font-bold text-white mb-8">
                   Recommendations
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                  {initialData.recommendations
-                    .slice(0, 12)
-                    .map((recommendation, index) => (
-                      <div key={index} className="group cursor-pointer">
-                        <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-white/5 border border-white/10 hover:scale-105 transition-transform duration-300">
-                          <Image
-                            src={recommendation.coverUrl}
-                            alt={recommendation.title}
-                            fill
-                            className="object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                        <h3 className="text-white font-semibold text-center text-sm line-clamp-2">
-                          {recommendation.title}
-                        </h3>
-                      </div>
-                    ))}
-                </div>
+                <AnimeCarousel
+                  animes={initialData.recommendations.slice(0, 10)}
+                />
               </div>
             )}
 

@@ -135,11 +135,20 @@ query AnimeById($id: Int!) {
         node {
           id
           title {
-            userPreferred
+            english
+            native
           }
+          description
           coverImage {
             extraLarge
           }
+          startDate {
+            year
+          }
+          genres
+          status
+          episodes
+          popularity
         }
       }
     }
@@ -149,11 +158,20 @@ query AnimeById($id: Int!) {
           mediaRecommendation {
             id
             title {
-              userPreferred
+              english
+              native
             }
+            description
             coverImage {
               extraLarge
             }
+            startDate {
+              year
+            }
+            genres
+            status
+            episodes
+            popularity
           }
         }
       }

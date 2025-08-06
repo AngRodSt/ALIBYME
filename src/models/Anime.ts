@@ -40,11 +40,20 @@ export interface RawGraphQLAnimeById {
       node: {
         id: number;
         title: {
-          userPreferred: string;
+          english: string;
+          native: string;
         };
+        description: string;
         coverImage: {
           extraLarge: string;
         };
+        startDate?: {
+          year: number;
+        };
+        genres?: string[];
+        status?: string;
+        episodes?: number;
+        popularity?: number;
       };
     }[];
   };
@@ -54,11 +63,20 @@ export interface RawGraphQLAnimeById {
         mediaRecommendation: {
           id: number;
           title: {
-            userPreferred: string;
+            english: string;
+            native: string;
           };
+          description: string;
           coverImage: {
             extraLarge: string;
           };
+          startDate?: {
+            year: number;
+          };
+          genres?: string[];
+          status?: string;
+          episodes?: number;
+          popularity?: number;
         };
       };
     }[];
@@ -154,19 +172,11 @@ export interface AnimeById extends Anime {
   // Relations
   relations?: {
     type: string;
-    anime: {
-      id: number;
-      title: string;
-      coverUrl: string;
-    };
+    anime: Anime[];
   }[];
 
   // Recommendations
-  recommendations?: {
-    id: number;
-    title: string;
-    coverUrl: string;
-  }[];
+  recommendations?: Anime[];
 
   // Studios
   studios?: string[];
