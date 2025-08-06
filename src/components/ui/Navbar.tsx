@@ -17,7 +17,7 @@ export default function Navbar() {
   const user = useUserStore((state) => state.user);
 
   return (
-    <div className="fixed bg-gradient-to-b from-black to-black/50 top-0 left-0 w-full z-50  pt-5">
+    <div className="fixed bg-gradient-to-b from-black to-black/50 top-0 left-0 w-full z-40  pt-5">
       <nav className="container mx-auto mb-3 flex justify-between items-center text-white px-4">
         {/* Logo */}
         <section className="flex items-center gap-2">
@@ -73,13 +73,12 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden bg-gradient-to-t from-black to-black/50 absolute w-full left-0 top-0 z-50
+        className={`lg:hidden bg-gradient-to-t from-black to-black/50 absolute w-full left-0 top-0 z-40
           transition-all duration-300 ease-in-out
-          overflow-hidden
           ${
             menuOpen
               ? "max-h-[400px] translate-y-17.5 opacity-100 pointer-events-auto"
-              : "max-h-0  translate-y-17.5 pointer-events-none"
+              : "max-h-0  translate-y-17.5 pointer-events-none overflow-hidden"
           }
         `}
       >
