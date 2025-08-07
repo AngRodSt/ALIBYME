@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { ChevronDown, LogOut, UserIcon, Settings } from "lucide-react";
+import Link from "next/link";
 
 export default function UserMenu({
   user,
@@ -64,13 +65,16 @@ export default function UserMenu({
         <div className="absolute right-0 w-64 sm:w-72  bg-gradient-to-r from-[#DB372D] to-[#BD2D69] backdrop-blur-lg rounded-b-xl shadow-2xl py-4 z-[9999] overflow-hidden">
           {/* Menu Options */}
           <div className="py-2">
-            <button className="flex items-center gap-3 w-full px-4 py-3 text-sm text-white hover:text-white hover:bg-white/30 transition-all duration-200 group">
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 w-full px-4 py-3 text-sm text-white hover:text-white hover:bg-white/30 transition-all duration-200 group"
+            >
               <UserIcon
                 size={18}
                 className="text-white group-hover:text-white transition-colors"
               />
               <span>My Profile</span>
-            </button>
+            </Link>
 
             <button className="flex items-center gap-3 w-full px-4 py-3 text-sm text-white hover:text-white hover:bg-white/30 transition-all duration-200 group">
               <Settings

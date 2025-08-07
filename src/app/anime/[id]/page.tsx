@@ -1,4 +1,4 @@
-import AnimeDescriptionPage from "@/components/layout/AnimeDescriptionPage";
+import AnimeDescriptionPage from "@/components/pages/AnimeDescriptionPage";
 import { getAnimeById } from "@/services/anime/animeGraphqlService";
 import React, { Suspense } from "react";
 
@@ -22,8 +22,7 @@ export default async function AnimePage({
 }) {
   try {
     const animeData = await getAnimeById(parseInt(params.id, 10));
-    console.log("Anime Data:", animeData);
-    // Ensure animeData has a valid id
+
     if (!animeData || typeof animeData.id === "undefined") {
       throw new Error("Anime data is missing or invalid");
     }

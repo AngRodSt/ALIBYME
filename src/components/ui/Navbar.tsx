@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import LoginPage from "./Modals/Login";
 import { useUserStore } from "@/store/userStore";
@@ -15,6 +15,23 @@ export default function Navbar() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const supabase = createClient();
   const user = useUserStore((state) => state.user);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   return (
     <div className="fixed bg-gradient-to-b from-black to-black/50 top-0 left-0 w-full z-40  pt-5">
@@ -34,12 +51,24 @@ export default function Navbar() {
         </section>
 
         <section className="hidden lg:flex gap-5 items-center">
-          <Link href={"/"}>
+          <Link
+            href={"/"}
+            onClick={() => {
+              setOpenModal(false);
+              setMenuOpen(false);
+            }}
+          >
             <p className="transition-transform duration-200 hover:scale-105 hover:text-[#DB372D]">
               Home
             </p>
           </Link>
-          <Link href={"/catalog"}>
+          <Link
+            href={"/catalog"}
+            onClick={() => {
+              setOpenModal(false);
+              setMenuOpen(false);
+            }}
+          >
             <p className="transition-transform duration-200 hover:scale-105 hover:text-[#DB372D]">
               Catalog
             </p>
@@ -48,7 +77,14 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <section className="hidden lg:flex gap-5 items-center">
-          <SearchBar />
+          <div
+            onClick={() => {
+              setOpenModal(false);
+              setMenuOpen(false);
+            }}
+          >
+            <SearchBar />
+          </div>
           {!user ? (
             <button
               onClick={() => setOpenModal(true)}
@@ -73,6 +109,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
+        ref={mobileMenuRef}
         className={`lg:hidden bg-gradient-to-t from-black to-black/50 absolute w-full left-0 top-0 z-40
           transition-all duration-300 ease-in-out
           ${

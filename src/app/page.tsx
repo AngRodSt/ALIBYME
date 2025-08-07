@@ -7,7 +7,7 @@ import {
   getStudiosAnime,
   getTopAnime,
 } from "@/services/anime/animeGraphqlService";
-import HomePageClient from "@/components/layout/HomePageClient";
+import HomePageClient from "@/components/pages/HomePageClient";
 
 //Lading component
 function HomePageSkeleton() {

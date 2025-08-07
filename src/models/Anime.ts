@@ -210,7 +210,7 @@ export interface AnimeById extends Anime {
 
 export interface UserAnimeStatus {
   anime_id: number;
-  status: "watching" | "completed" | "dropped" | "plan to watch";
+  status: "Watching" | "Watched" | "To Watch" | "Select Status";
 }
 
 export interface Favorites {
