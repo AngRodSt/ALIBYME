@@ -6,26 +6,66 @@ import { useUserStore } from "@/store/userStore";
 export default function ProfilePageClient() {
   const user = useUserStore((state) => state.user);
   const userProfile = useUserStore((state) => state.userProfile);
+  const favorites = useUserStore((state) => state.favorites);
+  const statuses = useUserStore((state) => state.statuses);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("toWatch");
   const itemsPerPage = 12;
-  const totalItems = 48; // Example total
+
+  // Filtrar los animes según la pestaña activa
+  const filteredAnimes = (() => {
+    switch (activeTab) {
+      case "favorite":
+        return favorites;
+      case "toWatch":
+        return statuses.filter((status) => status.status === "To Watch");
+      case "watching":
+        return statuses.filter((status) => status.status === "Watching");
+      case "watched":
+        return statuses.filter((status) => status.status === "Watched");
+      default:
+        return [];
+    }
+  })();
+
+  const totalItems = filteredAnimes.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+  const paginatedAnimes = filteredAnimes.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const tabs = [
-    { id: "toWatch", label: "To Watch", count: 56 },
-    { id: "watching", label: "Watching", count: 10 },
-    { id: "watched", label: "Watched", count: 52 },
-    { id: "favorite", label: "Favorite", count: 10 },
-    { id: "collections", label: "Collections", count: 3 },
+    {
+      id: "toWatch",
+      label: "To Watch",
+      count: statuses.filter((s) => s.status === "To Watch").length,
+    },
+    {
+      id: "watching",
+      label: "Watching",
+      count: statuses.filter((s) => s.status === "Watching").length,
+    },
+    {
+      id: "watched",
+      label: "Watched",
+      count: statuses.filter((s) => s.status === "Watched").length,
+    },
+    {
+      id: "favorite",
+      label: "Favorite",
+      count: favorites.length,
+    },
   ];
 
   return (
-    <div className="min-h-screen  bg-black text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Banner y avatar mejorado */}
-      <div className="relative pt-10 pb-20 w-full ">
+      <div className="relative pt-10 pb-20 w-full">
         <div className="absolute inset-0 bg-gradient-to-t bg-red-900/20" />
-        <div className="relative z-10  flex flex-col items-center justify-center h-full pt-16">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full pt-16">
           <div className="relative">
             <div className="w-36 h-36 rounded-full border-4 border-white shadow-2xl overflow-hidden mb-4 bg-gradient-to-br from-[#DB372D] to-[#BD2D69]">
               <Image
@@ -49,7 +89,7 @@ export default function ProfilePageClient() {
             {userProfile?.user_name ||
               user?.user_metadata?.full_name ||
               user?.email ||
-              "AngRod Sth"}
+              "User"}
           </h1>
           <p className="text-sm text-gray-300 mb-3">
             Alibymer since{" "}
@@ -64,9 +104,12 @@ export default function ProfilePageClient() {
           <div className="flex gap-4 text-xs text-gray-400">
             <span>Level 15</span>
             <span>•</span>
-            <span>127 anime completed</span>
+            <span>
+              {statuses.filter((s) => s.status === "Watched").length} anime
+              completed
+            </span>
             <span>•</span>
-            <span>1,250 episodes watched</span>
+            <span>{favorites.length} favorites</span>
           </div>
         </div>
       </div>
@@ -77,7 +120,10 @@ export default function ProfilePageClient() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setCurrentPage(1);
+              }}
               className={`px-4 py-2 rounded-t-lg font-semibold transition-all duration-200 ${
                 activeTab === tab.id
                   ? "text-white bg-gradient-to-r from-[#DB372D] to-[#BD2D69] border-b-2 border-[#DB372D]"
@@ -89,75 +135,17 @@ export default function ProfilePageClient() {
           ))}
         </div>
 
-        {/* Controles mejorados */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Sort By:</span>
-              <select className="bg-gray-800 border border-gray-600 px-3 py-1 rounded-lg text-white text-sm focus:border-[#DB372D] focus:outline-none">
-                <option>Title A-Z</option>
-                <option>Recently Added</option>
-                <option>Rating</option>
-                <option>Year</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">View:</span>
-              <div className="flex bg-gray-800 rounded-lg p-1">
-                <button className="p-1 rounded bg-[#DB372D] text-white">
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <button className="p-1 rounded text-gray-400">
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button className="bg-gradient-to-r from-[#DB372D] to-[#BD2D69] hover:from-[#BD2D69] hover:to-[#DB372D] px-6 py-2 rounded-lg text-white font-semibold flex items-center gap-2 transition-all duration-200 shadow-lg">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-              />
-            </svg>
-            Filters
-          </button>
-        </div>
-
-        {/* Grid de animes mejorado */}
+        {/* Grid de animes con datos reales */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {[...Array(itemsPerPage)].map((_, i) => (
+          {paginatedAnimes.map((item, i) => (
             <div
               key={i}
               className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-700/50 hover:border-[#DB372D]/50"
             >
               <div className="relative overflow-hidden">
                 <Image
-                  src="/images/anime-placeholder.jpg"
-                  alt="Anime Cover"
+                  src={item.animes.coverUrl || "/images/anime-placeholder.jpg"}
+                  alt={item.animes.title || "Anime Cover"}
                   width={200}
                   height={280}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
@@ -178,106 +166,135 @@ export default function ProfilePageClient() {
                     </svg>
                   </button>
                 </div>
-                <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                    9.2
-                  </span>
-                </div>
+                {item.animes.score && (
+                  <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                      {(item.animes.score / 10).toFixed(1)}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="p-3">
                 <h3 className="font-bold text-sm mb-1 line-clamp-2 group-hover:text-[#DB372D] transition-colors">
-                  Spy x Family Part 2
+                  {item.animes.title || "Anime Title"}
                 </h3>
-                <p className="text-xs text-gray-400 mb-1">2022 • Comedy</p>
+                <p className="text-xs text-gray-400 mb-1">
+                  {item.animes.year} •{" "}
+                  {Array.isArray(item.animes.genres)
+                    ? item.animes.genres[0]
+                    : "Unknown"}
+                </p>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500">Action</p>
-                  <div className="w-8 h-1 bg-gray-700 rounded-full overflow-hidden">
-                    <div className="w-3/4 h-full bg-[#DB372D] rounded-full"></div>
-                  </div>
+                  <p className="text-xs text-gray-500">
+                    {Array.isArray(item.animes.genres) &&
+                    item.animes.genres.length > 1
+                      ? item.animes.genres.slice(1, 2).join(", ")
+                      : "Genre"}
+                  </p>
+                  {item.animes.popularity && (
+                    <div className="w-8 h-1 bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-[#DB372D] rounded-full"
+                        style={{
+                          width: `${Math.min(
+                            (item.animes.popularity / 100000) * 100,
+                            100
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Paginación mejorada */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-12 mb-8 gap-4">
-          <div className="text-sm text-gray-400">
-            Showing {(currentPage - 1) * itemsPerPage + 1}-
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
-            results
+        {/* Mensaje cuando no hay datos */}
+        {filteredAnimes.length === 0 && (
+          <div className="text-center py-16">
+            <div className="text-gray-400 text-lg mb-2">
+              No animes found in this category
+            </div>
+            <p className="text-gray-500 text-sm">
+              Start adding animes to your list to see them here!
+            </p>
           </div>
+        )}
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-
-            <div className="flex gap-1">
-              {[
-                ...Array(Math.min(5, Math.ceil(totalItems / itemsPerPage))),
-              ].map((_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`px-3 py-2 rounded-lg font-semibold transition-all ${
-                      currentPage === pageNum
-                        ? "bg-gradient-to-r from-[#DB372D] to-[#BD2D69] text-white"
-                        : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
+        {/* Paginación mejorada */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-12 mb-8 gap-4">
+            <div className="text-sm text-gray-400">
+              Showing {(currentPage - 1) * itemsPerPage + 1}-
+              {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+              results
             </div>
 
-            <button
-              onClick={() =>
-                setCurrentPage(
-                  Math.min(
-                    Math.ceil(totalItems / itemsPerPage),
-                    currentPage + 1
-                  )
-                )
-              }
-              disabled={currentPage >= Math.ceil(totalItems / itemsPerPage)}
-              className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+
+              <div className="flex gap-1">
+                {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`px-3 py-2 rounded-lg font-semibold transition-all ${
+                        currentPage === pageNum
+                          ? "bg-gradient-to-r from-[#DB372D] to-[#BD2D69] text-white"
+                          : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() =>
+                  setCurrentPage(Math.min(totalPages, currentPage + 1))
+                }
+                disabled={currentPage >= totalPages}
+                className="p-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

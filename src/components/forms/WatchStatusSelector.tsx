@@ -1,17 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Bookmark, Eye, Check, ChevronDown, X } from "lucide-react";
-import { UserAnimeStatus } from "@/models/Anime";
+import { AnimeById, UserAnimeStatus } from "@/models/Anime";
 import { useUserStore } from "@/store/userStore";
 import { createClient } from "@/utils/supabase/client";
 
 interface WatchStatusSelectorProps {
-  animeId: number;
+  anime: AnimeById;
   className?: string;
 }
 
 export default function WatchStatusSelector({
-  animeId,
+  anime,
   className = "",
 }: WatchStatusSelectorProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -28,13 +28,13 @@ export default function WatchStatusSelector({
       setSelectedStatus("Select Status");
       return;
     }
-    const userStatus = statuses.find((status) => status.anime_id === animeId);
+    const userStatus = statuses.find((status) => status.anime_id === anime.id);
     if (userStatus) {
       setSelectedStatus(userStatus.status);
     } else {
       setSelectedStatus("Select Status");
     }
-  }, [statuses, user, animeId]);
+  }, [statuses, user, anime]);
 
   const statusOptions = [
     { label: "To Watch", icon: Bookmark, value: "to-watch" },
@@ -49,12 +49,12 @@ export default function WatchStatusSelector({
   const handleStatusChange = (status: UserAnimeStatus["status"]) => {
     if (!user) return;
     if (status === "Select Status") return;
-    updateStatus(animeId, status, user.id, supabase);
+    updateStatus(anime, status, user.id, supabase);
   };
 
   const handleRemoveStatus = () => {
     if (!user) return;
-    removeStatus(animeId, user.id, supabase);
+    removeStatus(anime.id, user.id, supabase);
   };
 
   const getButtonClass = (status: string) => {

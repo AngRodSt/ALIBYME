@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { Favorites, UserAnimeStatus } from "@/models/Anime";
+import {
+  AnimeById,
+  UserAnimeStatus,
+  FavoriteWithAnime,
+  UserAnimeStatusWithAnime,
+  AnimeDBData,
+} from "@/models/Anime";
 
 interface UserProfile {
   id: string;
@@ -16,21 +22,21 @@ interface UserStoreState {
   userProfile: UserProfile | null;
   preferencesModal: boolean;
   setPreferencesModal: (v: boolean) => void;
-  favorites: Favorites[];
-  statuses: UserAnimeStatus[];
+  favorites: FavoriteWithAnime[];
+  statuses: UserAnimeStatusWithAnime[];
   init: (supabase: SupabaseClient) => void;
   addFavorite: (
-    animeId: number,
+    anime: AnimeById,
     userId: string,
     supabase: SupabaseClient
   ) => Promise<void>;
   removeFavorite: (
-    animeId: number,
+    anime: AnimeById,
     userId: string,
     supabase: SupabaseClient
   ) => Promise<void>;
   updateAnimeStatus: (
-    animeId: number,
+    anime: AnimeById,
     status: UserAnimeStatus["status"],
     userId: string,
     supabase: SupabaseClient
@@ -78,72 +84,156 @@ export const useUserStore = create<UserStoreState>((set) => ({
       const [{ data: userProfileData }, { data: f }, { data: s }] =
         await Promise.all([
           supabase.from("users").select("*").eq("id", userId).maybeSingle(),
-          supabase.from("favorites").select("*").eq("user_id", userId),
+          supabase
+            .from("favorites")
+            .select(
+              `
+                anime_id,
+                animes!inner (
+                anime_id,
+                title,
+                coverUrl,
+                year,
+                genres,
+                score,
+                popularity
+                )
+              `
+            )
+            .eq("user_id", userId),
           supabase
             .from("user_anime_status")
-            .select("anime_id, status")
+            .select(
+              `
+              anime_id, 
+              status,
+              animes!inner (
+                anime_id,
+                title,
+                coverUrl,
+                year,
+                genres,
+                score,
+                popularity
+              )
+            `
+            )
             .eq("user_id", userId),
         ]);
+
+      // Transform data to match expected types
+      const transformedFavorites = (f || []).map((item) => ({
+        anime_id: item.anime_id,
+        animes: Array.isArray(item.animes) ? item.animes[0] : item.animes,
+      })) as FavoriteWithAnime[];
+
+      const transformedStatuses = (s || []).map((item) => ({
+        anime_id: item.anime_id,
+        status: item.status,
+        animes: Array.isArray(item.animes) ? item.animes[0] : item.animes,
+      })) as UserAnimeStatusWithAnime[];
+
       set({
         userProfile: userProfileData,
         preferencesModal: !userProfileData?.preferences,
-        favorites: f || [],
-        statuses: s || [],
+        favorites: transformedFavorites,
+        statuses: transformedStatuses,
       });
     }
   },
 
   addFavorite: async (
-    animeId: number,
+    anime: AnimeById,
     userId: string,
     supabase: SupabaseClient
   ) => {
+    //Verify if the anime already exist in the database or need to be added
+    const animeE = await addAnimeToDatabase(anime, supabase);
+    if (!animeE) {
+      console.log("Anime not found in database:", anime.id);
+      return;
+    }
+
+    // Create the new favorite with anime data
+    const newFavorite: FavoriteWithAnime = {
+      anime_id: anime.id,
+      animes: {
+        anime_id: animeE.anime_id,
+        title: animeE.title,
+        coverUrl: animeE.coverUrl,
+        year: animeE.year,
+        genres: animeE.genres,
+        score: animeE.score,
+        popularity: animeE.popularity,
+      },
+    };
+
     set((state) => ({
-      favorites: [...state.favorites, { anime_id: animeId, user_id: userId }],
+      favorites: [...state.favorites, newFavorite],
     }));
+
     await supabase
       .from("favorites")
-      .insert({ anime_id: animeId, user_id: userId });
+      .insert({ anime_id: anime.id, user_id: userId });
   },
   removeFavorite: async (
-    animeId: number,
+    anime: AnimeById,
     userId: string,
     supabase: SupabaseClient
   ) => {
     set((state) => ({
-      favorites: state.favorites.filter((f) => f.anime_id !== animeId),
+      favorites: state.favorites.filter((f) => f.anime_id !== anime.id),
     }));
     await supabase
       .from("favorites")
       .delete()
-      .eq("anime_id", animeId)
+      .eq("anime_id", anime.id)
       .eq("user_id", userId);
   },
 
   updateAnimeStatus: async (
-    animeId: number,
+    anime: AnimeById,
     status: UserAnimeStatus["status"],
     userId: string,
     supabase: SupabaseClient
   ) => {
+    const animeE = await addAnimeToDatabase(anime, supabase);
+    if (!animeE) {
+      console.log("Anime not found in database:", anime.id);
+      return;
+    }
+
     set((state) => {
-      const exists = state.statuses.find((s) => s.anime_id === animeId);
+      const exists = state.statuses.find((s) => s.anime_id === anime.id);
+      const animeData: AnimeDBData = {
+        anime_id: animeE.anime_id,
+        title: animeE.title,
+        coverUrl: animeE.coverUrl,
+        year: animeE.year,
+        genres: animeE.genres,
+        score: animeE.score,
+        popularity: animeE.popularity,
+      };
+
       if (exists) {
         return {
           statuses: state.statuses.map((s) =>
-            s.anime_id === animeId ? { ...s, status } : s
+            s.anime_id === anime.id ? { ...s, status, animes: animeData } : s
           ),
         };
       } else {
         return {
-          statuses: [...state.statuses, { anime_id: animeId, status }],
+          statuses: [
+            ...state.statuses,
+            { anime_id: anime.id, status, animes: animeData },
+          ],
         };
       }
     });
 
     await supabase.from("user_anime_status").upsert(
       {
-        anime_id: animeId,
+        anime_id: anime.id,
         user_id: userId,
         status,
         updated_at: new Date(),
@@ -167,3 +257,42 @@ export const useUserStore = create<UserStoreState>((set) => ({
       .eq("user_id", userId);
   },
 }));
+
+// Add anime to database so access data will be easier and faster
+async function addAnimeToDatabase(anime: AnimeById, supabase: SupabaseClient) {
+  const { data: existingAnime, error } = await supabase
+    .from("animes")
+    .select("*")
+    .eq("anime_id", anime.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error checking for existing anime:", error);
+    return;
+  }
+
+  if (existingAnime) {
+    console.log("Anime already exists in database:", existingAnime);
+    return existingAnime;
+  }
+
+  const { data: newAnime, error: insertError } = await supabase
+    .from("animes")
+    .insert({
+      anime_id: anime.id,
+      title: anime.title,
+      coverUrl: anime.coverUrl,
+      year: anime.year || anime.seasonYear,
+      genres: anime.genres,
+      popularity: anime.popularity,
+      score: anime.averageScore,
+    })
+    .select()
+    .maybeSingle();
+
+  if (insertError) {
+    console.error("Error adding anime to database:", insertError);
+    return null;
+  }
+  return newAnime;
+}

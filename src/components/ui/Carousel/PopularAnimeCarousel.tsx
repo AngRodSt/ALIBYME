@@ -32,12 +32,12 @@ export default function PopularAnimeCarousel({
   // PlaceHolders if there is not data
   const displayItems = animes?.length > 0 ? animes : Array(4).fill(null);
 
-  const handleToggleFavorite = (animeId: number, isNowFavorite: boolean) => {
+  const handleToggleFavorite = (anime: Anime, isNowFavorite: boolean) => {
     if (!user) return;
     if (isNowFavorite) {
-      addFavorite(animeId, user.id, supabase);
+      addFavorite(anime, user.id, supabase);
     } else {
-      removeFavorite(animeId, user.id, supabase);
+      removeFavorite(anime, user.id, supabase);
     }
   };
   return (
@@ -71,7 +71,7 @@ export default function PopularAnimeCarousel({
                   showOverlay={true}
                   isFavorite={favorites.some((f) => f.anime_id === anime.id)}
                   onToggle={(isNowFavorite) =>
-                    handleToggleFavorite(anime.id, isNowFavorite)
+                    handleToggleFavorite(anime, isNowFavorite)
                   }
                 />
               ) : (

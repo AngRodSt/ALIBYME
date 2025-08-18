@@ -120,7 +120,7 @@ export default function AnimeDescriptionPage(initialData: AnimeById) {
               </section>
 
               {/* Action Buttons - Watch Status Selector */}
-              <WatchStatusSelector animeId={initialData.id} />
+              <WatchStatusSelector anime={initialData} />
 
               {/*Favorite Button*/}
               <p className=" font-light  text-sm text-gray-300 mb-2">Add to</p>

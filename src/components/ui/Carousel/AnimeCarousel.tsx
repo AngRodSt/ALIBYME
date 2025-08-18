@@ -46,12 +46,12 @@ export default function AnimeCarousel({
     large: "min-h-[340px] sm:min-h-[400px] lg:min-h-[480px]",
   };
 
-  const handleToggleFavorite = (animeId: number, isNowFavorite: boolean) => {
+  const handleToggleFavorite = (anime: Anime, isNowFavorite: boolean) => {
     if (!user) return;
     if (isNowFavorite) {
-      addFavorite(animeId, user.id, supabase);
+      addFavorite(anime, user.id, supabase);
     } else {
-      removeFavorite(animeId, user.id, supabase);
+      removeFavorite(anime, user.id, supabase);
     }
   };
 
@@ -89,7 +89,7 @@ export default function AnimeCarousel({
                   showOverlay={showOverlay}
                   isFavorite={favorites.some((f) => f.anime_id === anime.id)}
                   onToggle={(isNowFavorite: boolean) =>
-                    handleToggleFavorite(anime.id, isNowFavorite)
+                    handleToggleFavorite(anime, isNowFavorite)
                   }
                 />
               ) : (

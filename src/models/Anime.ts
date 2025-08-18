@@ -218,6 +218,28 @@ export interface Favorites {
   user_id: string;
 }
 
+// Tipos para datos con JOIN desde la base de datos
+export interface AnimeDBData {
+  anime_id: number;
+  title: string;
+  coverUrl: string;
+  year?: number;
+  genres?: string[];
+  score?: number;
+  popularity?: number;
+}
+
+export interface FavoriteWithAnime {
+  anime_id: number;
+  animes: AnimeDBData;
+}
+
+export interface UserAnimeStatusWithAnime {
+  anime_id: number;
+  status: "Watching" | "Watched" | "To Watch" | "Select Status";
+  animes: AnimeDBData;
+}
+
 export interface RawGraphQLAnimeBasic {
   title: { english: string; native: string };
   bannerImage: string;
