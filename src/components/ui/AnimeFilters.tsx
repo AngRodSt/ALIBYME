@@ -205,18 +205,18 @@ export default function AnimeFilters({
                     className="fixed inset-0 bg-black/50"
                     onClick={() => setShowFilters(false)}
                   />
-                  <div className="relative bg-gradient-to-b from-gray-900 to-black w-80 max-w-[85vw] h-full overflow-y-auto shadow-xl">
+                  <div className="relative bg-white w-80 max-w-[85vw] h-full overflow-y-auto shadow-xl">
                     {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-gray-800/20 bg-gradient-to-r from-gray-900 to-black">
-                      <h2 className="text-lg font-semibold text-white">
-                        Filters
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Filtros
                       </h2>
                       <button
                         onClick={() => setShowFilters(false)}
-                        className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                       >
                         <svg
-                          className="w-5 h-5 text-gray-300"
+                          className="w-5 h-5 text-gray-500"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -236,15 +236,14 @@ export default function AnimeFilters({
                       {/* Genres Section */}
                       {availableGenres.length > 0 && (
                         <div>
-                          <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                            <div className="w-1 h-4 bg-gradient-to-b from-[#DB372D] to-[#BD2D69] rounded"></div>
-                            Genres
+                          <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                            Géneros
                           </h3>
                           <div className="space-y-3 max-h-64 overflow-y-auto">
                             {availableGenres.map((genre) => (
                               <label
                                 key={genre}
-                                className="flex items-center gap-3 cursor-pointer hover:bg-gray-800/50 p-2 rounded-lg transition-all"
+                                className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all"
                               >
                                 <input
                                   type="checkbox"
@@ -252,9 +251,9 @@ export default function AnimeFilters({
                                     genre
                                   )}
                                   onChange={() => handleGenreToggle(genre)}
-                                  className="w-4 h-4 text-[#DB372D] bg-gray-800 border-gray-600 rounded focus:ring-[#DB372D] focus:ring-2"
+                                  className="w-4 h-4 text-[#DB372D] bg-white border-gray-300 rounded focus:ring-[#DB372D] focus:ring-2"
                                 />
-                                <span className="text-sm text-gray-300">
+                                <span className="text-sm text-gray-700">
                                   {genre}
                                 </span>
                               </label>
@@ -265,14 +264,13 @@ export default function AnimeFilters({
 
                       {/* Year Range Section */}
                       <div>
-                        <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                          <div className="w-1 h-4 bg-gradient-to-b from-[#DB372D] to-[#BD2D69] rounded"></div>
-                          Year Range
+                        <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                          Rango de Años
                         </h3>
                         <div className="space-y-3">
                           <div>
-                            <label className="block text-xs text-gray-400 mb-1 font-medium">
-                              From
+                            <label className="block text-xs text-gray-600 mb-1 font-medium">
+                              Desde
                             </label>
                             <input
                               type="number"
@@ -289,14 +287,14 @@ export default function AnimeFilters({
                                   },
                                 })
                               }
-                              className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:border-[#DB372D] focus:outline-none focus:ring-2 focus:ring-[#DB372D]/20"
+                              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:border-[#DB372D] focus:outline-none focus:ring-2 focus:ring-[#DB372D]/20"
                               min={yearRange.min}
                               max={yearRange.max}
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-400 mb-1 font-medium">
-                              To
+                            <label className="block text-xs text-gray-600 mb-1 font-medium">
+                              Hasta
                             </label>
                             <input
                               type="number"
@@ -313,7 +311,7 @@ export default function AnimeFilters({
                                   },
                                 })
                               }
-                              className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:border-[#DB372D] focus:outline-none focus:ring-2 focus:ring-[#DB372D]/20"
+                              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:border-[#DB372D] focus:outline-none focus:ring-2 focus:ring-[#DB372D]/20"
                               min={yearRange.min}
                               max={yearRange.max}
                             />
@@ -323,19 +321,19 @@ export default function AnimeFilters({
                     </div>
 
                     {/* Footer */}
-                    <div className="p-4 border-t border-gray-800/20 bg-gradient-to-r from-gray-900 to-black">
+                    <div className="p-4 border-t border-gray-200 bg-gray-50">
                       <div className="flex gap-3">
                         <button
                           onClick={clearFilters}
-                          className="flex-1 px-4 py-3 bg-gray-800 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                          className="flex-1 px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                         >
-                          CLEAR
+                          LIMPIAR
                         </button>
                         <button
                           onClick={() => setShowFilters(false)}
-                          className="flex-1 px-4 py-3 bg-gradient-to-r from-[#DB372D] to-[#BD2D69] text-white rounded-lg hover:from-[#BD2D69] hover:to-[#DB372D] transition-colors text-sm font-medium"
+                          className="flex-1 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
                         >
-                          APPLY
+                          APLICAR
                         </button>
                       </div>
                     </div>
@@ -343,8 +341,8 @@ export default function AnimeFilters({
                 </div>
               ) : (
                 /* Desktop Dropdown */
-                <div className="absolute top-full right-0 mt-2 w-80 bg-gray-900 border border-gray-700/50 rounded-lg shadow-2xl z-50 backdrop-blur-sm overflow-hidden max-h-[70vh]">
-                  <div className="p-5 bg-gray-900 max-h-[70vh] overflow-y-auto">
+                <div className="absolute top-full right-0 mt-2 w-80 bg-gray-900 border border-gray-700/50 rounded-lg shadow-2xl z-50 backdrop-blur-sm">
+                  <div className="p-5">
                     <div className="space-y-6">
                       {/* Genres Section */}
                       {availableGenres.length > 0 && (
@@ -353,11 +351,11 @@ export default function AnimeFilters({
                             <div className="w-1 h-4 bg-gradient-to-b from-[#DB372D] to-[#BD2D69] rounded"></div>
                             Genres
                           </h3>
-                          <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 bg-gray-900">
+                          <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
                             {availableGenres.map((genre) => (
                               <label
                                 key={genre}
-                                className="flex items-center gap-3 cursor-pointer hover:bg-gray-800/50 p-2 rounded-lg transition-all duration-200 group bg-gray-900"
+                                className="flex items-center gap-3 cursor-pointer hover:bg-gray-800/50 p-2 rounded-lg transition-all duration-200 group"
                               >
                                 <input
                                   type="checkbox"
@@ -382,7 +380,7 @@ export default function AnimeFilters({
                           <div className="w-1 h-4 bg-gradient-to-b from-[#DB372D] to-[#BD2D69] rounded"></div>
                           Year Range
                         </h3>
-                        <div className="flex items-center gap-3 bg-gray-900">
+                        <div className="flex items-center gap-3">
                           <div className="flex-1">
                             <label className="block text-xs text-gray-400 mb-2 font-medium">
                               From
@@ -483,18 +481,18 @@ export default function AnimeFilters({
                     className="fixed inset-0 bg-black/50"
                     onClick={() => setShowSort(false)}
                   />
-                  <div className="relative bg-gradient-to-b from-gray-900 to-black w-80 max-w-[85vw] h-full overflow-y-auto shadow-xl">
+                  <div className="relative bg-white w-80 max-w-[85vw] h-full overflow-y-auto shadow-xl">
                     {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-gray-800/20 bg-gradient-to-r from-gray-900 to-black">
-                      <h2 className="text-lg font-semibold text-white">
-                        Sort by
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Ordenar por
                       </h2>
                       <button
                         onClick={() => setShowSort(false)}
-                        className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                       >
                         <svg
-                          className="w-5 h-5 text-gray-300"
+                          className="w-5 h-5 text-gray-500"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -514,16 +512,16 @@ export default function AnimeFilters({
                       {[
                         {
                           value: "dateAdded-desc",
-                          label: "Latest Added",
+                          label: "Agregado recientemente",
                         },
                         {
                           value: "dateAdded-asc",
-                          label: "Oldest Added",
+                          label: "Agregado hace tiempo",
                         },
-                        { value: "alphabetic-asc", label: "A to Z" },
-                        { value: "alphabetic-desc", label: "Z to A" },
-                        { value: "year-desc", label: "Newest Year" },
-                        { value: "year-asc", label: "Oldest Year" },
+                        { value: "alphabetic-asc", label: "A a Z" },
+                        { value: "alphabetic-desc", label: "Z a A" },
+                        { value: "year-desc", label: "Año más reciente" },
+                        { value: "year-asc", label: "Año más antiguo" },
                       ].map((option) => {
                         const [sortBy, sortOrder] = option.value.split("-");
                         const isSelected =
@@ -542,8 +540,8 @@ export default function AnimeFilters({
                             }}
                             className={`w-full text-left p-3 mb-2 rounded-lg transition-all flex items-center justify-between ${
                               isSelected
-                                ? "bg-gradient-to-r from-[#DB372D] to-[#BD2D69] text-white"
-                                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                                ? "bg-[#DB372D] text-white"
+                                : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                             }`}
                           >
                             <span className="text-sm font-medium">
@@ -570,8 +568,8 @@ export default function AnimeFilters({
                 </div>
               ) : (
                 /* Desktop Dropdown */
-                <div className="absolute top-full right-0 mt-2 w-64 bg-gray-900 border border-gray-700/50 rounded-lg shadow-2xl z-50 backdrop-blur-sm overflow-hidden max-h-[50vh]">
-                  <div className="py-2 bg-gray-900 max-h-[50vh] overflow-y-auto">
+                <div className="absolute top-full right-0 mt-2 w-64 bg-gray-900 border border-gray-700/50 rounded-lg shadow-2xl z-50 backdrop-blur-sm">
+                  <div className="py-2">
                     {[
                       { value: "dateAdded-desc", label: "Latest Added" },
                       { value: "dateAdded-asc", label: "Oldest Added" },
@@ -594,7 +592,7 @@ export default function AnimeFilters({
                               sortOrder as FilterOptions["sortOrder"]
                             )
                           }
-                          className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 flex items-center justify-between group bg-gray-900 ${
+                          className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 flex items-center justify-between group ${
                             isSelected
                               ? "text-white bg-gradient-to-r from-[#DB372D]/20 to-[#BD2D69]/20 border-l-2 border-[#DB372D]"
                               : "text-gray-300 hover:bg-gray-800/50 hover:text-white"
