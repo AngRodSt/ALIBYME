@@ -18,10 +18,17 @@ function HomePageSkeleton() {
 export default async function AnimePage({
   params,
 }: {
-  params: { id: string };
+  params?: Promise<{ [id: string]: string | string[] | undefined }>;
 }) {
   try {
-    const animeData = await getAnimeById(parseInt(params.id, 10));
+    if (!params) {
+      throw new Error("Params not provided");
+    }
+
+    const resolvedParams = await params;
+    const animeData = await getAnimeById(
+      parseInt(resolvedParams.id as string, 10)
+    );
 
     if (!animeData || typeof animeData.id === "undefined") {
       throw new Error("Anime data is missing or invalid");
