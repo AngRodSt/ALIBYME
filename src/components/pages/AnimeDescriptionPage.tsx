@@ -126,7 +126,7 @@ export default function AnimeDescriptionPage(initialData: AnimeById) {
               <p className=" font-light  text-sm text-gray-300 mb-2">Add to</p>
               <section className="mt-4 relative z-40 justify-between flex items-center max-w-[462px]">
                 <section className="flex gap-2">
-                  <FavoriteIcon size={24} />
+                  <FavoriteIcon anime={initialData} size={24} />
                   <div
                     className="flex w-10 p-2 rounded-full bg-black/30 backdrop-blur-sm transition-all duration-300 hover:bg-black/50 hover:scale-110
                   focus:outline-none focus:ring-2 focus:ring-white/50"

@@ -227,6 +227,7 @@ export interface AnimeDBData {
   genres?: string[];
   score?: number;
   popularity?: number;
+  description?: string;
 }
 
 export interface FavoriteWithAnime {

@@ -1,25 +1,55 @@
 import { useState } from "react";
 import clsx from "clsx";
+import { useUserStore } from "@/store/userStore";
+import { createClient } from "@/utils/supabase/client";
+import { AnimeById, Anime } from "@/models/Anime";
 
 interface FavoriteIconProps {
-  isFavorite?: boolean;
-  onToggle?: (isFavorite: boolean) => void;
+  anime: AnimeById | Anime;
   className?: string;
   size?: number;
+  // Legacy props for backward compatibility
+  isFavorite?: boolean;
+  onToggle?: (isFavorite: boolean) => void;
 }
 
 export default function FavoriteIcon({
-  isFavorite = false,
-  onToggle,
+  anime,
   className = "",
   size = 20,
+  // Legacy props
+  isFavorite: legacyIsFavorite,
+  onToggle: legacyOnToggle,
 }: FavoriteIconProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { user, favorites, addFavorite, removeFavorite } = useUserStore();
+  const supabase = createClient();
+
+  // Use legacy props if provided (for backward compatibility), otherwise use internal logic
+  const isUsingLegacyApi =
+    legacyIsFavorite !== undefined && legacyOnToggle !== undefined;
+
+  const isFavorite = isUsingLegacyApi
+    ? legacyIsFavorite
+    : favorites.some((fav) => fav.anime_id === anime.id);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onToggle?.(!isFavorite);
+
+    if (isUsingLegacyApi) {
+      // Use legacy API
+      legacyOnToggle?.(!legacyIsFavorite);
+    } else {
+      // Use internal logic
+      if (!user || !anime) return;
+
+      if (isFavorite) {
+        removeFavorite(anime, user.id, supabase);
+      } else {
+        addFavorite(anime, user.id, supabase);
+      }
+    }
   };
 
   return (

@@ -95,6 +95,7 @@ export const useUserStore = create<UserStoreState>((set) => ({
                 coverUrl,
                 year,
                 genres,
+                description,
                 score,
                 popularity
                 )
@@ -113,6 +114,7 @@ export const useUserStore = create<UserStoreState>((set) => ({
                 coverUrl,
                 year,
                 genres,
+                description,
                 score,
                 popularity
               )
@@ -160,6 +162,7 @@ export const useUserStore = create<UserStoreState>((set) => ({
       animes: {
         anime_id: animeE.anime_id,
         title: animeE.title,
+        description: animeE.description,
         coverUrl: animeE.coverUrl,
         year: animeE.year,
         genres: animeE.genres,
@@ -209,6 +212,7 @@ export const useUserStore = create<UserStoreState>((set) => ({
         anime_id: animeE.anime_id,
         title: animeE.title,
         coverUrl: animeE.coverUrl,
+        description: animeE.description,
         year: animeE.year,
         genres: animeE.genres,
         score: animeE.score,
@@ -284,6 +288,7 @@ async function addAnimeToDatabase(anime: AnimeById, supabase: SupabaseClient) {
       coverUrl: anime.coverUrl,
       year: anime.year || anime.seasonYear,
       genres: anime.genres,
+      description: anime.description || "No description available.",
       popularity: anime.popularity,
       score: anime.averageScore,
     })

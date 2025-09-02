@@ -59,55 +59,69 @@ export function mapRawAnimeById(raw: RawGraphQLAnimeById): AnimeById {
     trailer: raw.trailer,
     // Relations - mapear como objetos Anime completos
     relations:
-      raw.relations?.edges?.map((edge) => ({
-        type: edge.relationType,
-        anime: [
-          {
-            id: edge.node.id,
-            title: edge.node.title.english || edge.node.title.native,
-            description: edge.node.description,
-            coverUrl: edge.node.coverImage.extraLarge,
-            year: edge.node.startDate?.year,
-            genres: edge.node.genres,
-            status: edge.node.status,
-            episodes: edge.node.episodes,
-            popularity: edge.node.popularity,
-          },
-        ],
-      })) || [],
+      raw.relations?.edges
+        ?.filter((edge) => edge.node) // Filter out null/undefined nodes
+        ?.map((edge) => ({
+          type: edge.relationType || "UNKNOWN",
+          anime: [
+            {
+              id: edge.node.id || 0,
+              title:
+                edge.node.title?.english ||
+                edge.node.title?.native ||
+                "Unknown Title",
+              description: edge.node.description || "",
+              coverUrl: edge.node.coverImage?.extraLarge || "",
+              year: edge.node.startDate?.year || undefined,
+              genres: edge.node.genres || [],
+              status: edge.node.status || undefined,
+              episodes: edge.node.episodes || undefined,
+              popularity: edge.node.popularity || undefined,
+            },
+          ],
+        })) || [],
     // Recommendations - mapear como objetos Anime completos
     recommendations:
-      raw.recommendations?.edges?.map((edge) => ({
-        id: edge.node.mediaRecommendation.id,
-        title:
-          edge.node.mediaRecommendation.title.english ||
-          edge.node.mediaRecommendation.title.native,
-        description: edge.node.mediaRecommendation.description,
-        coverUrl: edge.node.mediaRecommendation.coverImage.extraLarge,
-        year: edge.node.mediaRecommendation.startDate?.year,
-        genres: edge.node.mediaRecommendation.genres,
-        status: edge.node.mediaRecommendation.status,
-        episodes: edge.node.mediaRecommendation.episodes,
-        popularity: edge.node.mediaRecommendation.popularity,
-      })) || [],
+      raw.recommendations?.edges
+        ?.filter((edge) => edge.node?.mediaRecommendation) // Filter out null/undefined recommendations
+        ?.map((edge) => {
+          const rec = edge.node.mediaRecommendation;
+          return {
+            id: rec.id || 0,
+            title: rec.title?.english || rec.title?.native || "Unknown Title",
+            description: rec.description || "",
+            coverUrl: rec.coverImage?.extraLarge || "",
+            year: rec.startDate?.year || undefined,
+            genres: rec.genres || [],
+            status: rec.status || undefined,
+            episodes: rec.episodes || undefined,
+            popularity: rec.popularity || undefined,
+          };
+        }) || [],
     staff:
-      raw.staff?.nodes?.map((staffMember) => ({
-        name: staffMember.name.userPreferred,
-        age: staffMember.age,
-        image: staffMember.image.medium,
-        dateOfBirth: staffMember.dateOfBirth,
-        primaryOccupations: staffMember.primaryOccupations,
-        recentWork: staffMember.staffMedia?.nodes?.[0]
-          ? {
-              id: staffMember.staffMedia.nodes[0].id,
-              title: staffMember.staffMedia.nodes[0].title.userPreferred,
-            }
-          : undefined,
-      })) || [],
+      raw.staff?.nodes
+        ?.filter((staffMember) => staffMember) // Filter out null/undefined staff members
+        ?.map((staffMember) => ({
+          name: staffMember.name?.userPreferred || "Unknown Staff",
+          age: staffMember.age || undefined,
+          image: staffMember.image?.medium || "",
+          dateOfBirth: staffMember.dateOfBirth || undefined,
+          primaryOccupations: staffMember.primaryOccupations || [],
+          recentWork: staffMember.staffMedia?.nodes?.[0]
+            ? {
+                id: staffMember.staffMedia.nodes[0].id || 0,
+                title:
+                  staffMember.staffMedia.nodes[0].title?.userPreferred ||
+                  "Unknown Title",
+              }
+            : undefined,
+        })) || [],
     characters:
-      raw.characters?.nodes?.map((character) => ({
-        name: character.name.userPreferred,
-        image: character.image.large,
-      })) || [],
+      raw.characters?.nodes
+        ?.filter((character) => character) // Filter out null/undefined characters
+        ?.map((character) => ({
+          name: character.name?.userPreferred || "Unknown Character",
+          image: character.image?.large || "",
+        })) || [],
   };
 }

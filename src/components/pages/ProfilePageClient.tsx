@@ -1,7 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { useUserStore } from "@/store/userStore";
+import AnimeCard from "../ui/AnimeCard";
+import AnimeFilters, { FilterOptions } from "../ui/AnimeFilters";
+import { applyFilters, getDefaultFilters } from "@/utils/animeFilters";
 
 export default function ProfilePageClient() {
   const user = useUserStore((state) => state.user);
@@ -11,10 +14,11 @@ export default function ProfilePageClient() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("toWatch");
+  const [filters, setFilters] = useState<FilterOptions>(getDefaultFilters());
   const itemsPerPage = 12;
 
   // Filtrar los animes según la pestaña activa
-  const filteredAnimes = (() => {
+  const baseFilteredAnimes = useMemo(() => {
     switch (activeTab) {
       case "favorite":
         return favorites;
@@ -27,7 +31,17 @@ export default function ProfilePageClient() {
       default:
         return [];
     }
-  })();
+  }, [activeTab, favorites, statuses]);
+
+  // Aplicar filtros adicionales (género, año, orden)
+  const filteredAnimes = useMemo(() => {
+    return applyFilters(baseFilteredAnimes, filters);
+  }, [baseFilteredAnimes, filters]);
+
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
 
   const totalItems = filteredAnimes.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -62,7 +76,7 @@ export default function ProfilePageClient() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Banner y avatar mejorado */}
+      {/* Banner and avatar  */}
       <div className="relative pt-10 pb-20 w-full">
         <div className="absolute inset-0 bg-gradient-to-t bg-red-900/20" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full pt-16">
@@ -71,7 +85,7 @@ export default function ProfilePageClient() {
               <Image
                 src={
                   user?.user_metadata?.avatar_url ||
-                  "/images/profile-avatar.png"
+                  "/images/profile-avatar.jpg"
                 }
                 alt={
                   user?.user_metadata?.full_name ||
@@ -114,7 +128,7 @@ export default function ProfilePageClient() {
         </div>
       </div>
 
-      {/* Tabs mejorados */}
+      {/* Tabs */}
       <div className="container mx-auto px-4 mt-8">
         <div className="flex flex-wrap gap-4 border-b border-gray-700/50 pb-3 mb-6">
           {tabs.map((tab) => (
@@ -123,6 +137,7 @@ export default function ProfilePageClient() {
               onClick={() => {
                 setActiveTab(tab.id);
                 setCurrentPage(1);
+                setFilters(getDefaultFilters()); // Reset filters when changing tabs
               }}
               className={`px-4 py-2 rounded-t-lg font-semibold transition-all duration-200 ${
                 activeTab === tab.id
@@ -135,82 +150,28 @@ export default function ProfilePageClient() {
           ))}
         </div>
 
-        {/* Grid de animes con datos reales */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {paginatedAnimes.map((item, i) => (
-            <div
-              key={i}
-              className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-700/50 hover:border-[#DB372D]/50"
-            >
-              <div className="relative overflow-hidden">
-                <Image
-                  src={item.animes.coverUrl || "/images/anime-placeholder.jpg"}
-                  alt={item.animes.title || "Anime Cover"}
-                  width={200}
-                  height={280}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button className="bg-[#DB372D] p-2 rounded-full text-white hover:bg-[#BD2D69] transition-colors">
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                {item.animes.score && (
-                  <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                      {(item.animes.score / 10).toFixed(1)}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="p-3">
-                <h3 className="font-bold text-sm mb-1 line-clamp-2 group-hover:text-[#DB372D] transition-colors">
-                  {item.animes.title || "Anime Title"}
-                </h3>
-                <p className="text-xs text-gray-400 mb-1">
-                  {item.animes.year} •{" "}
-                  {Array.isArray(item.animes.genres)
-                    ? item.animes.genres[0]
-                    : "Unknown"}
-                </p>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500">
-                    {Array.isArray(item.animes.genres) &&
-                    item.animes.genres.length > 1
-                      ? item.animes.genres.slice(1, 2).join(", ")
-                      : "Genre"}
-                  </p>
-                  {item.animes.popularity && (
-                    <div className="w-8 h-1 bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#DB372D] rounded-full"
-                        style={{
-                          width: `${Math.min(
-                            (item.animes.popularity / 100000) * 100,
-                            100
-                          )}%`,
-                        }}
-                      ></div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+        {/* Filters */}
+        <AnimeFilters
+          filteredAnimes={baseFilteredAnimes}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
+
+        {/* Anime grid */}
+        <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 overflow-hidden pb-20">
+          {paginatedAnimes.map((item) => (
+            <AnimeCard
+              key={item.animes.anime_id}
+              anime={{
+                ...item.animes,
+                id: item.animes.anime_id,
+                description: item.animes.description || "",
+              }}
+            />
           ))}
         </div>
 
-        {/* Mensaje cuando no hay datos */}
+        {/* Message when there is no data */}
         {filteredAnimes.length === 0 && (
           <div className="text-center py-16">
             <div className="text-gray-400 text-lg mb-2">
@@ -222,9 +183,9 @@ export default function ProfilePageClient() {
           </div>
         )}
 
-        {/* Paginación mejorada */}
+        {/* pagination */}
         {totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row justify-between items-center mt-12 mb-8 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center  pb-8 gap-4">
             <div className="text-sm text-gray-400">
               Showing {(currentPage - 1) * itemsPerPage + 1}-
               {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
