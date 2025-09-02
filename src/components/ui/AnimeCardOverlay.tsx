@@ -54,15 +54,14 @@ export default function AnimeCardOverlay({
               <span
                 className={`text-yellow-400 ${textSizes.overlaySubtitle} font-medium flex items-center`}
               >
-                ⭐{" "}
                 {anime.popularity
-                  ? `${Math.floor(anime.popularity / 1000)}K`
-                  : "N/A"}
+                  ? `⭐ ${Math.floor(anime.popularity / 1000)}K`
+                  : ""}
               </span>
               <span
                 className={`text-red-400 ${textSizes.overlaySubtitle} font-medium uppercase tracking-wide`}
               >
-                {anime.status || "Unknown"}
+                {anime.status || ""}
               </span>
             </div>
 

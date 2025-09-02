@@ -15,12 +15,18 @@ interface AnimeCardProps {
   anime: Anime;
   size?: AnimeCardSize;
   showOverlay?: boolean;
+  // Legacy props for backward compatibility
+  isFavorite?: boolean;
+  onToggle?: (isNowFavorite: boolean) => void;
 }
 
 export default function AnimeCard({
   anime,
   size = "medium",
   showOverlay = true,
+  // Legacy props - maintain for backward compatibility but not required
+  isFavorite,
+  onToggle,
 }: AnimeCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const sizeClass = cardSizeClasses[size];
@@ -37,66 +43,83 @@ export default function AnimeCard({
   };
 
   return (
-    <div className={`rounded ${sizeClass} w-full transition-opacity p-2`}>
-      <Link
-        href={`/anime/${anime.id}`}
-        prefetch={true}
-        className="relative inline-block h-full w-full group"
+    <div
+      data-testid="anime-card"
+      className={`rounded ${sizeClass} w-full transition-opacity p-2`}
+    >
+      <div
+        className="relative w-full h-full overflow-hidden rounded"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {anime.coverUrl ? (
-          <Image
-            src={anime.coverUrl}
-            alt={anime.title}
-            fill
-            className={clsx(
-              "relative h-full rounded w-full object-cover",
-              "transition-all duration-600"
+        <Link
+          href={`/anime/${anime.id}`}
+          prefetch={true}
+          className="relative inline-block w-full h-full group"
+        >
+          {anime.coverUrl ? (
+            <Image
+              src={anime.coverUrl}
+              alt={anime.title}
+              fill
+              className={clsx(
+                "relative h-full rounded w-full object-cover",
+                "transition-all duration-600"
+              )}
+              sizes={imageSizes[size]}
+            />
+          ) : null}
+
+          <div className="absolute bottom-0 w-full h-full z-20 transition-all duration-600 content-end">
+            {/* Overlay base */}
+            <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent rounded-b"></div>
+
+            {/* Icono de favorito */}
+            <div className="absolute top-2 right-2 z-40">
+              <FavoriteIcon
+                anime={anime}
+                isFavorite={isFavorite}
+                onToggle={onToggle}
+              />
+            </div>
+
+            {/* Información básica siempre visible */}
+            <section className="mx-2 mb-5 mr-14 relative z-30">
+              <p
+                className={`text-white font-extralight ${textSizes.title} truncate drop-shadow-lg`}
+                title={anime.title}
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "normal",
+                }}
+              >
+                {anime.title}
+              </p>
+              <p
+                className={`text-gray-400 ${textSizes.subtitle} drop-shadow-md`}
+              >
+                {anime.year}
+                {anime.genres && anime.genres.length > 0
+                  ? ` • ${anime.genres[0]}`
+                  : ""}
+              </p>
+            </section>
+
+            {/* Overlay completo en hover */}
+            {showOverlay && (
+              <AnimeCardOverlay
+                anime={anime}
+                isVisible={isHovered}
+                size={size}
+              />
             )}
-            sizes={imageSizes[size]}
-          />
-        ) : null}
-
-        <div className="absolute bottom-0 w-full h-full z-20 transition-all duration-600 content-end">
-          {/* Overlay base */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent rounded-b"></div>
-
-          {/* Icono de favorito */}
-          <div className="absolute top-2 right-2 z-40">
-            <FavoriteIcon />
           </div>
-
-          {/* Información básica siempre visible */}
-          <section className="mx-2 mb-5 mr-14 relative z-30">
-            <p
-              className={`text-white font-extralight ${textSizes.title} truncate drop-shadow-lg`}
-              title={anime.title}
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "normal",
-              }}
-            >
-              {anime.title}
-            </p>
-            <p className={`text-gray-400 ${textSizes.subtitle} drop-shadow-md`}>
-              {anime.year}
-              {anime.genres && anime.genres.length > 0
-                ? ` • ${anime.genres[0]}`
-                : ""}
-            </p>
-          </section>
-
-          {/* Overlay completo en hover */}
-          {showOverlay && (
-            <AnimeCardOverlay anime={anime} isVisible={isHovered} size={size} />
-          )}
-        </div>
-      </Link>
+        </Link>
+      </div>
     </div>
   );
 }

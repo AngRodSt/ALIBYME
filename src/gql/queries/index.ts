@@ -114,3 +114,128 @@ query Studios {
   }
 }
 `;
+
+export const animeById = `
+query AnimeById($id: Int!) {
+  Media(id: $id) {
+    id
+    title {
+      romaji
+      english
+      native
+    }
+    trailer {
+      site
+      thumbnail
+      id
+    }
+    relations {
+      edges {
+        relationType
+        node {
+          id
+          title {
+            english
+            native
+          }
+          description
+          coverImage {
+            extraLarge
+          }
+          startDate {
+            year
+          }
+          genres
+          status
+          episodes
+          popularity
+        }
+      }
+    }
+    recommendations(page: 1, perPage: 15) {
+      edges {
+        node {
+          mediaRecommendation {
+            id
+            title {
+              english
+              native
+            }
+            description
+            coverImage {
+              extraLarge
+            }
+            startDate {
+              year
+            }
+            genres
+            status
+            episodes
+            popularity
+          }
+        }
+      }
+    }
+    type
+    format
+    status
+    episodes
+    duration
+    season
+    seasonYear
+    countryOfOrigin
+    source
+    studios {
+      nodes {
+        name
+      }
+    }
+    volumes
+    chapters
+    coverImage {
+      extraLarge
+    }
+    bannerImage
+    description
+    averageScore
+    genres
+    tags {
+      name
+    }
+    staff {
+      nodes {
+        name {
+          userPreferred
+        }
+        age
+        image {
+          medium
+        }
+        dateOfBirth {
+          year
+          month
+          day
+        }
+        primaryOccupations
+        staffMedia(perPage: 1) {
+          nodes {
+            id
+            title {
+              userPreferred
+            }
+          }
+        }
+      }
+    }
+    characters {
+      nodes {
+        name {
+          userPreferred
+        }
+        image {
+          large
+        }
+      }
+    }
+  }
+}`;

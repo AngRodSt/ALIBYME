@@ -8,7 +8,11 @@ export default function SearchBar() {
   return (
     <div className="focus-within:ring-2 focus-within:ring-[#DB372D] focus-within:border-[#DB372D] flex gap-2 backdrop-blur-md bg-white/10 rounded-2xl p-2 shadow-md items-center w-64 transition">
       <Search />
+      <label htmlFor="search" className="sr-only">
+        Buscar
+      </label>
       <input
+        id="search"
         type="text"
         placeholder="Search your favorite anime"
         className="bg-transparent outline-none w-full text-white placeholder-gray-100"

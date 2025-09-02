@@ -40,7 +40,10 @@ export default function AnimeCarousel({
 
   return (
     <>
-      <div className={`relative w-full ${minHeights[cardSize]}`}>
+      <div
+        data-testid="anime-carousel"
+        className={`relative w-full ${minHeights[cardSize]}`}
+      >
         <Swiper
           modules={[Navigation]}
           spaceBetween={2}
@@ -87,7 +90,8 @@ export default function AnimeCarousel({
 
         {/* Custom Navigation Buttons */}
         <button
-          className={`${prevButtonClass} absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 hover:scale-110`}
+          className={`${prevButtonClass} absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#DB372D] focus:ring-offset-2 focus:ring-offset-black`}
+          aria-label="Anterior"
         >
           <svg
             width="24"
@@ -107,7 +111,8 @@ export default function AnimeCarousel({
         </button>
 
         <button
-          className={`${nextButtonClass} absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 hover:scale-110`}
+          className={`${nextButtonClass} absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#DB372D] focus:ring-offset-2 focus:ring-offset-black`}
+          aria-label="Siguiente"
         >
           <svg
             width="24"
