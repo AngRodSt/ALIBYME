@@ -11,14 +11,14 @@ export const createClient = (request: NextRequest) => {
       headers: request.headers,
     },
   });
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const supabase = createServerClient(supabaseUrl!, supabaseKey!, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) =>
+        cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value)
         );
         supabaseResponse = NextResponse.next({
