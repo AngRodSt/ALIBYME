@@ -1,4 +1,29 @@
 // Exportación de las consultas GraphQL
+export const searchAnimeQuery = `
+  query SearchAnime($search: String!, $perPage: Int) {
+    Page(perPage: $perPage) {
+      media(search: $search, type: ANIME, sort: [POPULARITY_DESC]) {
+        id
+        title {
+          english
+          romaji
+          native
+        }
+        description(asHtml: false)
+        coverImage {
+          extraLarge
+        }
+        status
+        startDate {
+          year
+        }
+        genres
+        popularity
+      }
+    }
+  }
+`;
+
 export const trendingQuery = `
   query TrendingAnime($perPage: Int = 25, $page: Int = 1) {
     Page(perPage: $perPage, page: $page) {
