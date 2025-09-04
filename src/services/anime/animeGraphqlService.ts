@@ -6,6 +6,7 @@ import {
   lastReleases,
   studios,
   animeById,
+  searchAnimeQuery,
 } from "@/gql/queries";
 import {
   Anime,
@@ -55,6 +56,24 @@ async function requestWithRetry<T>(
     }
   }
   throw new Error("Max retries exceeded");
+}
+
+export async function getSearchAnime(
+  search: string,
+  perPage = 10
+): Promise<Anime[]> {
+  try {
+    return await requestWithRetry(async () => {
+      const { Page } = await graphqlClient.request<{
+        Page: { media: RawGraphQLAnime[] };
+      }>(searchAnimeQuery, { search, perPage });
+
+      return Page.media.map(mapRawToAnime);
+    });
+  } catch (error) {
+    console.error("Error searching anime:", error);
+    return [];
+  }
 }
 
 export async function getAnimeById(id: number): Promise<AnimeById | null> {
